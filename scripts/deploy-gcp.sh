@@ -78,22 +78,27 @@ PROXY_RATE_LIMIT_RPM=60
 REQUEST_ANALYTICS_RETENTION_DAYS=30
 REQUEST_ANALYTICS_MAX_ROWS=50000
 
-# ── Provider API Keys（手動填入） ──
-# 主要：Google Gemini
+# ── Provider API Keys（依委員會建議優先順序：Gemini → Groq → GitHub → NVIDIA → OpenRouter）
+# 主要：Google Gemini（免費 tier，60 RPM）
 GOOGLE_API_KEY=
-# 次要：Groq
+# 次要：Groq（9 免費模型，TPM 150K-300K）
 GROQ_API_KEY=
-# 備援：GitHub Models
+# 備援：GitHub Models（需 PAT + models scope，150 RPD / 15 RPM）
 GITHUB_TOKEN=
-# 備援：NVIDIA NIM
+# 備援：NVIDIA NIM（⚠️ Kimi K2.6 免費端點 2026/07/07 停用）
 NVIDIA_API_KEY=
-# 備援：Mistral
+# 備援：Mistral（無免費 API quota）
 MISTRAL_API_KEY=
 
-# ── Provider 每日上限 ──
+# ── Provider 每日上限（依官方 Rate Limit 設定）
+# Gemini 各 tier 支出限制不同，設 cap 避免超量
 PROVIDER_DAILY_REQUEST_CAP_GOOGLE=1000
+# Groq 免費 tier TPM 150K-300K，設 500 RPD 安全值
 PROVIDER_DAILY_REQUEST_CAP_GROQ=500
-PROVIDER_DAILY_REQUEST_CAP_GITHUB=500
+# GitHub Models Copilot Free = 150 RPD
+PROVIDER_DAILY_REQUEST_CAP_GITHUB=150
+# NVIDIA NIM 免費 rate limit 未公開，保守設 200
+PROVIDER_DAILY_REQUEST_CAP_NVIDIA=200
 
 # ── 智研後端 ──
 ZHIYAN_PORT=8001
