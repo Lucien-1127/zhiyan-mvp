@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -160,14 +160,33 @@ class Component extends DCLogic {
     this.setState({ sending: true });
     document.getElementById('loadingOverlay').style.display = 'flex';
 
-    setTimeout(() => {
-      const response = `根據台灣法律，「${text}」的相關規定如下：\n\n本回答基於台灣現行法律，僅供參考，不構成法律意見。建議諮詢專業律師以獲得具體法律建議。`;
+    // 呼叫後端 API
+    fetch('/api/chat/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, provider: 'freellmapi' }),
+    })
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })
+    .then(data => {
+      let response = data.content;
+      // 如果 RAG 沒有資料，顯示提示
+      if (data.rag_warning) {
+        response = '⚠️ ' + response;
+      }
       this.addMessage(response, 'ai');
+    })
+    .catch(err => {
+      this.addMessage('❌ 查詢失敗：' + err.message + '，請確認後端伺服器是否啟動 (localhost:8001)', 'ai', true);
+    })
+    .finally(() => {
       this.setState({ sending: false });
       document.getElementById('loadingOverlay').style.display = 'none';
       this.updateSendBtn();
       this.scrollToBottom();
-    }, 1500);
+    });
   };
 
   addMessage = (text, role) => {

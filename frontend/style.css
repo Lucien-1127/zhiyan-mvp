@@ -527,6 +527,13 @@ body {
   color: var(--text-secondary);
 }
 
+/* ─── Print ──────────────────────────────────── */
+@media print {
+  .sidebar, .topbar, .input-area, .loading-overlay { display: none !important; }
+  .main-content { overflow: visible !important; }
+  .message { break-inside: avoid; }
+}
+
 /* ─── Animations ───────────────────────────────── */
 @keyframes fadeIn {
   from { opacity: 0; }

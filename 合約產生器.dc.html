@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -41,7 +41,7 @@
           <div style="font-weight: 600; margin-bottom: 4px;">🔧 服務條款</div>
           <div style="font-size: 12px; color: #6b7280;">提供服務時的標準條款與責任說明</div>
         </button>
-        <button onclick="selectContract('financing')" style="padding: 12px; border: 1px solid #e5e7eb; background: #ffffff; border-radius: 8px; text-align: left; cursor: pointer; font-family: inherit; transition: all 0.15s;" onmouseover="this.style.borderColor='#c9a84c';" onmouseout="this.style.borderColor='#e5e7eb';">
+        <button onclick="selectContract('funding')" style="padding: 12px; border: 1px solid #e5e7eb; background: #ffffff; border-radius: 8px; text-align: left; cursor: pointer; font-family: inherit; transition: all 0.15s;" onmouseover="this.style.borderColor='#c9a84c';" onmouseout="this.style.borderColor='#e5e7eb';">
           <div style="font-weight: 600; margin-bottom: 4px;">💰 融資協議</div>
           <div style="font-size: 12px; color: #6b7280;">用於貸款、融資等金融交易</div>
         </button>
@@ -90,7 +90,7 @@
         <div id="contractPreview" style="background: #f5f5f5; padding: 16px; border-radius: 8px; font-size: 13px; line-height: 1.8; color: #333; max-height: 300px; overflow-y: auto; margin-bottom: 12px;"></div>
         <div style="display: flex; gap: 8px;">
           <button style="flex: 1; padding: 12px; background: #1A5276; color: #ffffff; border-radius: 8px; cursor: pointer; border: none; font-family: inherit;" onmouseover="this.style.opacity='0.9';" onmouseout="this.style.opacity='1';">下載 PDF</button>
-          <button style="flex: 1; padding: 12px; border: 1px solid #1A5276; color: #1A5276; border-radius: 8px; cursor: pointer; background: #ffffff; border: none; font-family: inherit; font-weight: 600;" onmouseover="this.style.background='#f0f9ff';" onmouseout="this.style.background='#ffffff';">複製文字</button>
+          <button onclick="copyContract()" style="flex: 1; padding: 12px; border: 1px solid #1A5276; color: #1A5276; border-radius: 8px; cursor: pointer; background: #ffffff; font-family: inherit; font-weight: 600;" onmouseover="this.style.background='#f0f9ff';" onmouseout="this.style.background='#ffffff';">複製文字</button>
         </div>
       </div>
     </div>
@@ -112,6 +112,7 @@ class Component extends DCLogic {
   };
 
   generateContract = async () => {
+    const type = this.state.selectedType;
     const partyA = document.getElementById('partyA').value;
     const partyB = document.getElementById('partyB').value;
     const requirements = document.getElementById('requirements').value;
@@ -121,42 +122,57 @@ class Component extends DCLogic {
       return;
     }
 
-    // 模擬 API 呼叫
-    const mockContract = `保密協議
+    // 顯示載入
+    const btn = document.querySelector('#paramsForm button');
+    const originalText = btn.textContent;
+    btn.textContent = '⏳ 生成中...';
+    btn.disabled = true;
 
-簽訂日期：${new Date().toLocaleDateString('zh-TW')}
-
-本協議由下列各方簽署：
-甲方：${partyA}
-乙方：${partyB}
-
-第一條 保密義務
-雙方同意對在執行本協議過程中獲悉的所有機密資訊保守秘密。
-
-第二條 保密資訊定義
-保密資訊係指未向公眾公開的、具有經濟價值的、技術性或商業性的資訊。
-
-第三條 例外情況
-下列資訊不視為保密資訊：
-1. 已公開發表的資訊
-2. 已合法取得的資訊
-3. 獨立開發的資訊
-
-${requirements ? `第四條 特殊條款\n${requirements}\n` : ''}
-
-本協議自簽署之日起生效。`;
-
-    document.getElementById('contractPreview').textContent = mockContract;
-    document.getElementById('resultArea').style.display = 'block';
-    window.scrollTo(0, 0);
+    try {
+      const res = await fetch('/api/contract/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: type,
+          params: { 甲方: partyA, 乙方: partyB, 其他: requirements },
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      document.getElementById('contractPreview').textContent = data.content;
+      document.getElementById('resultArea').style.display = 'block';
+    } catch (err) {
+      alert('❌ 合約產生失敗：' + err.message);
+    } finally {
+      btn.textContent = originalText;
+      btn.disabled = false;
+    }
   };
 
   renderVals() {
     return {
       selectContract: this.selectContract,
       generateContract: this.generateContract,
+      copyContract: this.copyContract,
     };
   }
+}
+
+// copyContract function outside DC logic so it can be called from HTML onclick
+function copyContract() {
+  const text = document.getElementById('contractPreview').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    alert('✅ 已複製到剪貼簿');
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    alert('✅ 已複製到剪貼簿');
+  });
 }
 </script>
 </body>

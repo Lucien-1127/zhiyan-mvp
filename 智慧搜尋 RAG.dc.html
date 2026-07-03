@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -42,9 +42,63 @@
     </div>
 
     <!-- 搜尋結果 -->
-    <div id="results" style="display: none; animation: fadeIn 0.3s ease;">
-      <div style="background: #ffffff; border-radius: 12px; padding: 12px; margin-bottom: 8px; border: 1px solid #e5e7eb; cursor: pointer;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)';" onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)';">
-        <div style="font-weight
-</x-dc>
-</body>
-</html>
+      <div id="results" style="display: none; animation: fadeIn 0.3s ease;">
+        <div id="resultsList"></div>
+        <div id="noResults" style="display: none; text-align: center; padding: 40px; color: #9ca3af;">
+          無搜尋結果
+        </div>
+      </div>
+
+      <!-- 初始狀態 -->
+      <div id="emptyState" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 20px;">
+        <div style="font-size: 48px; margin-bottom: 16px;">🔍</div>
+        <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">智慧法規搜尋</h2>
+        <p style="color: #6b7280; font-size: 14px;">輸入關鍵字搜尋台灣法規條文</p>
+      </div>
+
+    </main>
+    </div>
+    </x-dc>
+    <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;375px&quot;,&quot;height&quot;:&quot;812px&quot;}}">
+    class Component extends DCLogic {
+    performSearch = async () => {
+      const query = document.getElementById('searchInput').value.trim();
+      if (!query) return;
+
+      document.getElementById('emptyState').style.display = 'none';
+      document.getElementById('results').style.display = 'block';
+      document.getElementById('resultsList').innerHTML = '<div style="text-align:center;padding:20px;color:#6b7280;">⏳ 搜尋中...</div>';
+
+      try {
+        const res = await fetch(`/api/search/query?query=${encodeURIComponent(query)}&limit=10`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        const list = document.getElementById('resultsList');
+        list.innerHTML = '';
+
+        if (data.total === 0) {
+          document.getElementById('noResults').style.display = 'block';
+          return;
+        }
+        document.getElementById('noResults').style.display = 'none';
+
+        data.results.forEach(r => {
+          const div = document.createElement('div');
+          div.style.cssText = 'background:#ffffff;border-radius:12px;padding:12px;margin-bottom:8px;border:1px solid #e5e7eb;';
+          div.innerHTML = `
+            <div style="font-weight:600;color:#1a2332;margin-bottom:4px;">${r.law_name} ${r.article_number ? '第' + r.article_number + '條' : ''}</div>
+            <div style="font-size:13px;color:#6b7280;line-height:1.6;">${r.content.slice(0, 200)}${r.content.length > 200 ? '...' : ''}</div>
+          `;
+          list.appendChild(div);
+        });
+      } catch (err) {
+        document.getElementById('resultsList').innerHTML = `<div style="text-align:center;padding:20px;color:#ef4444;">❌ 搜尋失敗：${err.message}</div>`;
+      }
+    };
+
+    renderVals() {
+      return { performSearch: this.performSearch };
+    }
+    }
+    </script>

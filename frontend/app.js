@@ -73,20 +73,28 @@ async function sendMessage() {
         message: text,
         temperature: 0.3,
         max_tokens: 4096,
+        provider: 'freellmapi',
       }),
     });
 
     if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.detail || '伺服器錯誤');
+      const errText = await res.text().catch(() => '');
+      throw new Error(errText ? `伺服器錯誤: ${errText.slice(0, 100)}` : `HTTP ${res.status}`);
     }
 
     const data = await res.json();
-    addMessage(data.content, 'ai', data);
-    state.model = data.model;
-    modelDisplay.textContent = data.model;
+    let displayContent = data.content;
+    
+    // RAG 無資料時顯示警告
+    if (data.rag_warning) {
+      displayContent = '⚠️ ' + displayContent;
+    }
+    
+    addMessage(displayContent, 'ai', data);
+    state.model = data.model || 'auto';
+    modelDisplay.textContent = state.model;
   } catch (e) {
-    addMessage(`❌ 查詢失敗：${e.message}`, 'ai', null, true);
+    addMessage(`❌ 連線失敗：${e.message}。請確認後端伺服器是否已啟動（port 8001）`, 'ai', null, true);
   } finally {
     state.sending = false;
     loadingOverlay.style.display = 'none';
