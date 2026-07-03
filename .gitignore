@@ -1,0 +1,12 @@
+# 智研 AI 法律系統 — Git ignore
+node_modules/
+.env
+.env.local
+*.log
+.DS_Store
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+dist/
+build/

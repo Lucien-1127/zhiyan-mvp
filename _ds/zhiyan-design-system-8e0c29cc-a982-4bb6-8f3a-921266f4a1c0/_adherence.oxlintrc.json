@@ -1,0 +1,220 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "components/chat/**",
+              "sources/zhiyan-web/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='MessageBubble'] > JSXAttribute > JSXIdentifier[name!=/^(?:role|children|meta|modeTag|error|key|ref|className|style|children)$/]",
+        "message": "<MessageBubble> doesn't accept that prop. Declared props: role, children, meta, modeTag, error."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='MessageBubble'] > JSXAttribute[name.name='role'] > Literal[value!=/^(?:user|ai)$/]",
+        "message": "<MessageBubble> role must be one of 'user' | 'ai'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SuggestionChip'] > JSXAttribute > JSXIdentifier[name!=/^(?:children|onClick|key|ref|className|style|children)$/]",
+        "message": "<SuggestionChip> doesn't accept that prop. Declared props: children, onClick."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "MessageBubble": {
+        "replaces": []
+      },
+      "SuggestionChip": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--accent-tint-05",
+      "--accent-tint-10",
+      "--accent-tint-15",
+      "--bg-chat",
+      "--bg-input",
+      "--bg-main",
+      "--bg-sidebar",
+      "--bubble-ai",
+      "--bubble-ai-text",
+      "--bubble-border",
+      "--bubble-user",
+      "--bubble-user-text",
+      "--color-accent",
+      "--color-accent-hover",
+      "--color-monitor-seed",
+      "--color-primary",
+      "--color-primary-light",
+      "--diff-added",
+      "--diff-modified",
+      "--diff-removed",
+      "--dur-fast",
+      "--dur-med",
+      "--dur-slow",
+      "--ease-default",
+      "--font-mono",
+      "--font-sans",
+      "--leading-message",
+      "--radius-bubble-tail",
+      "--radius-full",
+      "--radius-lg",
+      "--radius-md",
+      "--radius-pill",
+      "--radius-sm",
+      "--radius-xs",
+      "--shadow-md",
+      "--shadow-sm",
+      "--sidebar-divider",
+      "--sidebar-hover",
+      "--space-1",
+      "--space-2",
+      "--space-3",
+      "--space-4",
+      "--space-5",
+      "--space-6",
+      "--space-8",
+      "--status-error",
+      "--status-error-strong",
+      "--status-info",
+      "--status-ok",
+      "--status-ok-strong",
+      "--status-warn",
+      "--surface-card",
+      "--surface-page",
+      "--text-2xl",
+      "--text-base-leading",
+      "--text-base-size",
+      "--text-body",
+      "--text-body-size",
+      "--text-lg",
+      "--text-light",
+      "--text-md",
+      "--text-muted",
+      "--text-primary",
+      "--text-secondary",
+      "--text-sidebar",
+      "--text-sidebar-heading",
+      "--text-sm",
+      "--text-stat",
+      "--text-xl",
+      "--text-xs",
+      "--tracking-logo",
+      "--tracking-sub"
+    ],
+    "tokenKinds": {
+      "--color-primary": "color",
+      "--color-primary-light": "color",
+      "--color-accent": "color",
+      "--color-accent-hover": "color",
+      "--color-monitor-seed": "color",
+      "--bg-main": "color",
+      "--bg-sidebar": "color",
+      "--bg-chat": "color",
+      "--bg-input": "color",
+      "--text-primary": "font",
+      "--text-secondary": "font",
+      "--text-light": "font",
+      "--text-sidebar": "font",
+      "--text-sidebar-heading": "font",
+      "--bubble-user": "color",
+      "--bubble-user-text": "font",
+      "--bubble-ai": "color",
+      "--bubble-ai-text": "font",
+      "--bubble-border": "color",
+      "--status-ok": "color",
+      "--status-warn": "color",
+      "--status-error": "color",
+      "--status-error-strong": "color",
+      "--status-info": "color",
+      "--status-ok-strong": "color",
+      "--diff-modified": "color",
+      "--diff-added": "color",
+      "--diff-removed": "color",
+      "--surface-card": "color",
+      "--surface-page": "color",
+      "--text-body": "font",
+      "--text-muted": "font",
+      "--accent-tint-15": "color",
+      "--accent-tint-10": "color",
+      "--accent-tint-05": "color",
+      "--sidebar-divider": "color",
+      "--sidebar-hover": "color",
+      "--font-sans": "font",
+      "--font-mono": "font",
+      "--text-base-size": "font",
+      "--text-base-leading": "font",
+      "--text-xs": "font",
+      "--text-sm": "font",
+      "--text-md": "font",
+      "--text-body-size": "font",
+      "--text-lg": "font",
+      "--text-xl": "font",
+      "--text-2xl": "font",
+      "--text-stat": "font",
+      "--leading-message": "font",
+      "--tracking-logo": "font",
+      "--tracking-sub": "font",
+      "--radius-xs": "radius",
+      "--radius-sm": "radius",
+      "--radius-md": "radius",
+      "--radius-lg": "radius",
+      "--radius-pill": "radius",
+      "--radius-full": "radius",
+      "--radius-bubble-tail": "radius",
+      "--shadow-sm": "shadow",
+      "--shadow-md": "shadow",
+      "--space-1": "spacing",
+      "--space-2": "spacing",
+      "--space-3": "spacing",
+      "--space-4": "spacing",
+      "--space-5": "spacing",
+      "--space-6": "spacing",
+      "--space-8": "spacing",
+      "--ease-default": "other",
+      "--dur-fast": "other",
+      "--dur-med": "other",
+      "--dur-slow": "other"
+    },
+    "fontFamilies": []
+  }
+}

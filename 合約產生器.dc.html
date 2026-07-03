@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif; font-size: 15px; line-height: 1.6; color: #1a2332; background: #f5f6fa; }
+    button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+    textarea, input { font: inherit; color: inherit; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</helmet>
+
+<div style="display: flex; flex-direction: column; height: 100vh; background: #f5f6fa;">
+
+  <!-- 頂欄 -->
+  <header style="background: #ffffff; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e5e7eb;">
+    <button style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #1a2332; font-size: 18px;">←</button>
+    <h1 style="font-size: 18px; font-weight: 600; flex: 1; text-align: center; margin: 0;">合約產生器</h1>
+    <div style="width: 40px;"></div>
+  </header>
+
+  <!-- 內容 -->
+  <main style="flex: 1; overflow-y: auto; padding: 16px;">
+
+    <!-- 合約類型選擇 -->
+    <div style="background: #ffffff; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid #e5e7eb;">
+      <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">選擇合約類型</h2>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button onclick="selectContract('nda')" style="padding: 12px; border: 2px solid #c9a84c; background: rgba(201,168,76,0.08); border-radius: 8px; text-align: left; cursor: pointer; font-family: inherit; transition: all 0.15s;" onmouseover="this.style.background='rgba(201,168,76,0.15)';" onmouseout="this.style.background='rgba(201,168,76,0.08)';">
+          <div style="font-weight: 600; margin-bottom: 4px;">📄 保密協議 (NDA)</div>
+          <div style="font-size: 12px; color: #6b7280;">適用於商業合作、投資評估等保密場景</div>
+        </button>
+        <button onclick="selectContract('service')" style="padding: 12px; border: 1px solid #e5e7eb; background: #ffffff; border-radius: 8px; text-align: left; cursor: pointer; font-family: inherit; transition: all 0.15s;" onmouseover="this.style.borderColor='#c9a84c';" onmouseout="this.style.borderColor='#e5e7eb';">
+          <div style="font-weight: 600; margin-bottom: 4px;">🔧 服務條款</div>
+          <div style="font-size: 12px; color: #6b7280;">提供服務時的標準條款與責任說明</div>
+        </button>
+        <button onclick="selectContract('financing')" style="padding: 12px; border: 1px solid #e5e7eb; background: #ffffff; border-radius: 8px; text-align: left; cursor: pointer; font-family: inherit; transition: all 0.15s;" onmouseover="this.style.borderColor='#c9a84c';" onmouseout="this.style.borderColor='#e5e7eb';">
+          <div style="font-weight: 600; margin-bottom: 4px;">💰 融資協議</div>
+          <div style="font-size: 12px; color: #6b7280;">用於貸款、融資等金融交易</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- 參數輸入 -->
+    <div id="paramsForm" style="background: #ffffff; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid #e5e7eb; display: none; animation: slideDown 0.3s ease;">
+      <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">填寫合約資訊</h2>
+      
+      <div style="margin-bottom: 12px;">
+        <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">甲方公司/個人名稱</label>
+        <input id="partyA" type="text" placeholder="例：台北科技有限公司" style="width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: inherit; font-size: 14px;">
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">乙方公司/個人名稱</label>
+        <input id="partyB" type="text" placeholder="例：合作方公司" style="width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: inherit; font-size: 14px;">
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">合約有效期限</label>
+        <select style="width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: inherit; font-size: 14px;">
+          <option>1 年</option>
+          <option>2 年</option>
+          <option>3 年</option>
+          <option>5 年</option>
+          <option>無期限</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">其他需求</label>
+        <textarea id="requirements" placeholder="例：加入非競爭條款、賠償金額..." style="width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: inherit; font-size: 14px; min-height: 80px; resize: vertical;"></textarea>
+      </div>
+
+      <button onclick="generateContract()" style="width: 100%; padding: 12px; background: #1A5276; color: #ffffff; border-radius: 8px; cursor: pointer; border: none; font-family: inherit; font-weight: 600; transition: all 0.15s;" onmouseover="this.style.opacity='0.9';" onmouseout="this.style.opacity='1';">
+        生成合約
+      </button>
+    </div>
+
+    <!-- 生成結果 -->
+    <div id="resultArea" style="display: none;">
+      <div style="background: #ffffff; border-radius: 12px; padding: 16px; border: 1px solid #e5e7eb; margin-bottom: 12px;">
+        <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">合約預覽</h2>
+        <div id="contractPreview" style="background: #f5f5f5; padding: 16px; border-radius: 8px; font-size: 13px; line-height: 1.8; color: #333; max-height: 300px; overflow-y: auto; margin-bottom: 12px;"></div>
+        <div style="display: flex; gap: 8px;">
+          <button style="flex: 1; padding: 12px; background: #1A5276; color: #ffffff; border-radius: 8px; cursor: pointer; border: none; font-family: inherit;" onmouseover="this.style.opacity='0.9';" onmouseout="this.style.opacity='1';">下載 PDF</button>
+          <button style="flex: 1; padding: 12px; border: 1px solid #1A5276; color: #1A5276; border-radius: 8px; cursor: pointer; background: #ffffff; border: none; font-family: inherit; font-weight: 600;" onmouseover="this.style.background='#f0f9ff';" onmouseout="this.style.background='#ffffff';">複製文字</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;375px&quot;,&quot;height&quot;:&quot;812px&quot;}}">
+class Component extends DCLogic {
+  state = {
+    selectedType: null,
+  };
+
+  selectContract = (type) => {
+    this.setState({ selectedType: type });
+    document.getElementById('paramsForm').style.display = 'block';
+    document.getElementById('resultArea').style.display = 'none';
+  };
+
+  generateContract = async () => {
+    const partyA = document.getElementById('partyA').value;
+    const partyB = document.getElementById('partyB').value;
+    const requirements = document.getElementById('requirements').value;
+
+    if (!partyA || !partyB) {
+      alert('請填寫甲乙方資訊');
+      return;
+    }
+
+    // 模擬 API 呼叫
+    const mockContract = `保密協議
+
+簽訂日期：${new Date().toLocaleDateString('zh-TW')}
+
+本協議由下列各方簽署：
+甲方：${partyA}
+乙方：${partyB}
+
+第一條 保密義務
+雙方同意對在執行本協議過程中獲悉的所有機密資訊保守秘密。
+
+第二條 保密資訊定義
+保密資訊係指未向公眾公開的、具有經濟價值的、技術性或商業性的資訊。
+
+第三條 例外情況
+下列資訊不視為保密資訊：
+1. 已公開發表的資訊
+2. 已合法取得的資訊
+3. 獨立開發的資訊
+
+${requirements ? `第四條 特殊條款\n${requirements}\n` : ''}
+
+本協議自簽署之日起生效。`;
+
+    document.getElementById('contractPreview').textContent = mockContract;
+    document.getElementById('resultArea').style.display = 'block';
+    window.scrollTo(0, 0);
+  };
+
+  renderVals() {
+    return {
+      selectContract: this.selectContract,
+      generateContract: this.generateContract,
+    };
+  }
+}
+</script>
+</body>
+</html>

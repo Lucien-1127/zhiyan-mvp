@@ -1,0 +1,56 @@
+/* 智研 Zhiyan Design System — Colors
+   Sources: sources/zhiyan-web/style.css (chat SaaS) + sources/law_monitor_app (Flutter M3) */
+:root {
+  /* ── Brand (chat) ── */
+  --color-primary: #1a2332;        /* deep navy — sidebar, user avatar */
+  --color-primary-light: #243044;
+  --color-accent: #c9a84c;         /* legal gold — CTA, focus, highlights */
+  --color-accent-hover: #d4b85a;
+
+  /* ── Monitor app seed (Flutter M3) ── */
+  --color-monitor-seed: #1A5276;   /* steel blue — law monitor app */
+
+  /* ── Backgrounds ── */
+  --bg-main: #f5f6fa;
+  --bg-sidebar: #1a2332;
+  --bg-chat: #ffffff;
+  --bg-input: #ffffff;
+
+  /* ── Text ── */
+  --text-primary: #1a2332;
+  --text-secondary: #6b7280;
+  --text-light: #9ca3af;
+  --text-sidebar: #c8d0dc;
+  --text-sidebar-heading: #8b9ab0;
+
+  /* ── Message bubbles ── */
+  --bubble-user: #e8edf5;
+  --bubble-user-text: #1a2332;
+  --bubble-ai: #ffffff;
+  --bubble-ai-text: #1a2332;
+  --bubble-border: #e5e7eb;
+
+  /* ── Semantic / status ── */
+  --status-ok: #22c55e;            /* 已連線 / 無異動 */
+  --status-warn: #ea580c;          /* 待確認 (orange.shade600) */
+  --status-error: #ef4444;         /* 連線失敗 */
+  --status-error-strong: #dc2626;  /* 有異動 (red.shade600) */
+  --status-info: #2563eb;          /* 追蹤中 (blue.shade600) */
+  --status-ok-strong: #16a34a;     /* green.shade600 */
+
+  /* ── Diff kinds (monitor app, exact values) ── */
+  --diff-modified: #B4882B;        /* 修正 */
+  --diff-added: #2F7D4F;           /* 新增 */
+  --diff-removed: #B4452B;         /* 刪除 */
+
+  /* ── Semantic aliases ── */
+  --surface-card: var(--bg-chat);
+  --surface-page: var(--bg-main);
+  --text-body: var(--text-primary);
+  --text-muted: var(--text-secondary);
+  --accent-tint-15: rgba(201, 168, 76, 0.15);
+  --accent-tint-10: rgba(201, 168, 76, 0.10);
+  --accent-tint-05: rgba(201, 168, 76, 0.05);
+  --sidebar-divider: rgba(255, 255, 255, 0.06);
+  --sidebar-hover: rgba(255, 255, 255, 0.08);
+}

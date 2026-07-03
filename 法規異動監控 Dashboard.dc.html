@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif; font-size: 15px; line-height: 1.6; color: #1a2332; background: #f5f5f5; }
+    button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  </style>
+</helmet>
+
+<div style="display: flex; flex-direction: column; height: 100vh; background: #f5f5f5;">
+
+  <!-- 頂部欄 -->
+  <header style="background: #ffffff; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+    <h1 style="font-size: 18px; font-weight: 600; margin: 0; flex: 1; text-align: center;">法規異動監控</h1>
+    <div style="display: flex; gap: 4px;">
+      <button style="width: 40px; height: 40px; border: none; background: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #1a2332; font-size: 20px;" onmouseover="this.style.background='#f5f5f5';" onmouseout="this.style.background='none';">
+        <span class="material-symbols-outlined">search</span>
+      </button>
+      <button style="width: 40px; height: 40px; border: none; background: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #1a2332; font-size: 20px;" onmouseover="this.style.background='#f5f5f5';" onmouseout="this.style.background='none';">
+        <span class="material-symbols-outlined">settings</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 內容區 -->
+  <main style="flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
+
+    <!-- 統計卡片 -->
+    <div style="padding: 16px; background: #ffffff; margin: 12px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px;">
+        <div style="text-align: center;">
+          <div style="font-size: 28px; font-weight: bold; color: #2563eb; margin-bottom: 4px;">12</div>
+          <div style="font-size: 12px; color: #6b7280;">追蹤中</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-size: 28px; font-weight: bold; color: #22c55e; margin-bottom: 4px;">8</div>
+          <div style="font-size: 12px; color: #6b7280;">無異動</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-size: 28px; font-weight: bold; color: #f59e0b; margin-bottom: 4px;">3</div>
+          <div style="font-size: 12px; color: #6b7280;">待確認</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-size: 28px; font-weight: bold; color: #ef4444; margin-bottom: 4px;">1</div>
+          <div style="font-size: 12px; color: #6b7280;">有異動</div>
+        </div>
+      </div>
+      <div style="border-top: 1px solid #e5e7eb; padding-top: 12px; display: flex; justify-content: space-around; font-size: 12px; color: #6b7280;">
+        <span>索引：2,847 筆</span>
+        <span>近 7 天異動：5 部</span>
+      </div>
+    </div>
+
+    <!-- 法規列表標題 -->
+    <div style="padding: 0 16px 8px; font-size: 14px; font-weight: 600; color: #1a2332;">追蹤法規</div>
+
+    <!-- 法規卡片列表 -->
+    <div style="padding: 0 12px 80px; display: flex; flex-direction: column; gap: 8px;">
+
+      <!-- 卡片 1：無異動 -->
+      <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px; display: flex; gap: 12px; align-items: flex-start; box-shadow: 0 1px 3px rgba(0,0,0,0.08); cursor: pointer;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)';" onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)';">
+        <div style="width: 12px; height: 12px; border-radius: 50%; background: #22c55e; flex-shrink: 0; margin-top: 4px;"></div>
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-weight: 500; font-size: 15px; color: #1a2332; margin-bottom: 6px;">刑法</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span style="font-size: 11px; background: #e0e7ff; color: #2563eb; padding: 2px 8px; border-radius: 4px;">法律</span>
+            <span style="font-size: 11px; background: #dbeafe; color: #2563eb; padding: 2px 8px; border-radius: 4px;">年度修</span>
+          </div>
+        </div>
+        <span class="material-symbols-outlined" style="color: #d1d5db; flex-shrink: 0;">chevron_right</span>
+      </div>
+
+      <!-- 卡片 2：待確認 -->
+      <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px; display: flex; gap: 12px; align-items: flex-start; box-shadow: 0 1px 3px rgba(0,0,0,0.08); cursor: pointer;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)';" onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)';">
+        <div style="width: 12px; height: 12px; border-radius: 50%; background: #f59e0b; flex-shrink: 0; margin-top: 4px;"></div>
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-weight: 500; font-size: 15px; color: #1a2332; margin-bottom: 6px;">民法</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span style="font-size: 11px; background: #e0e7ff; color: #2563eb; padding: 2px 8px; border-radius: 4px;">法律</span>
+            <span style="font-size: 11px; background: #fef3c7; color: #b45309; padding: 2px 8px; border-radius: 4px;">月度修</span>
+          </div>
+        </div>
+        <span class="material-symbols-outlined" style="color: #d1d5db; flex-shrink: 0;">chevron_right</span>
+      </div>
+
+      <!-- 卡片 3：有異動 -->
+      <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px; display: flex; gap: 12px; align-items: flex-start; box-shadow: 0 1px 3px rgba(0,0,0,0.08); cursor: pointer;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)';" onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)';">
+        <div style="width: 12px; height: 12px; border-radius: 50%; background: #ef4444; flex-shrink: 0; margin-top: 4px;"></div>
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-weight: 500; font-size: 15px; color: #1a2332; margin-bottom: 6px;">勞動基準法</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span style="font-size: 11px; background: #fee2e2; color: #dc2626; padding: 2px 8px; border-radius: 4px;">法律</span>
+            <span style="font-size: 11px; background: #dbeafe; color: #2563eb; padding: 2px 8px; border-radius: 4px;">季度修</span>
+          </div>
+        </div>
+        <span class="material-symbols-outlined" style="color: #d1d5db; flex-shrink: 0;">chevron_right</span>
+      </div>
+
+      <!-- 卡片 4 -->
+      <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px; display: flex; gap: 12px; align-items: flex-start; box-shadow: 0 1px 3px rgba(0,0,0,0.08); cursor: pointer;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)';" onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)';">
+        <div style="width: 12px; height: 12px; border-radius: 50%; background: #22c55e; flex-shrink: 0; margin-top: 4px;"></div>
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-weight: 500; font-size: 15px; color: #1a2332; margin-bottom: 6px;">公司法</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span style="font-size: 11px; background: #e0e7ff; color: #2563eb; padding: 2px 8px; border-radius: 4px;">法律</span>
+            <span style="font-size: 11px; background: #dbeafe; color: #2563eb; padding: 2px 8px; border-radius: 4px;">季度修</span>
+          </div>
+        </div>
+        <span class="material-symbols-outlined" style="color: #d1d5db; flex-shrink: 0;">chevron_right</span>
+      </div>
+
+      <!-- 卡片 5 -->
+      <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px; display: flex; gap: 12px; align-items: flex-start; box-shadow: 0 1px 3px rgba(0,0,0,0.08); cursor: pointer;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)';" onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)';">
+        <div style="width: 12px; height: 12px; border-radius: 50%; background: #22c55e; flex-shrink: 0; margin-top: 4px;"></div>
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-weight: 500; font-size: 15px; color: #1a2332; margin-bottom: 6px;">著作權法</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span style="font-size: 11px; background: #fef3c7; color: #b45309; padding: 2px 8px; border-radius: 4px;">法律</span>
+            <span style="font-size: 11px; background: #dbeafe; color: #2563eb; padding: 2px 8px; border-radius: 4px;">月度修</span>
+          </div>
+        </div>
+        <span class="material-symbols-outlined" style="color: #d1d5db; flex-shrink: 0;">chevron_right</span>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FAB 按鈕 -->
+  <button style="position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: #1A5276; color: #ffffff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(26, 82, 118, 0.3); transition: all 0.15s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(26, 82, 118, 0.4)'; this.style.transform='scale(1.1)';" onmouseout="this.style.boxShadow='0 4px 12px rgba(26, 82, 118, 0.3)'; this.style.transform='scale(1)';">
+    <span class="material-symbols-outlined">refresh</span>
+  </button>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;375px&quot;,&quot;height&quot;:&quot;812px&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

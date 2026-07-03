@@ -1,0 +1,24 @@
+/* 智研 Zhiyan Design System — Typography
+   Both products use system CJK stacks; no custom webfonts ship with the brand. */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Base */
+  --text-base-size: 15px;
+  --text-base-leading: 1.6;
+
+  /* Scale (from source CSS) */
+  --text-xs: 11px;      /* hints, version info, meta */
+  --text-sm: 12px;      /* status, model chip, labels */
+  --text-md: 13px;      /* chips, code */
+  --text-body-size: 14px; /* messages, nav, inputs */
+  --text-lg: 16px;      /* topbar title */
+  --text-xl: 20px;      /* logo 智研 */
+  --text-2xl: 24px;     /* welcome heading */
+  --text-stat: 28px;    /* dashboard stat numbers */
+
+  --leading-message: 1.7;
+  --tracking-logo: 1px;
+  --tracking-sub: 2px;  /* logo subtitle, uppercase */
+}

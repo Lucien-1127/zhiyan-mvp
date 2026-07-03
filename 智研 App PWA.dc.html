@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#1a2332">
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes messageIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; font-size: 15px; line-height: 1.6; color: #1a2332; background: #f5f6fa; }
+    button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+    input, textarea, select { font: inherit; color: inherit; }
+    ::-webkit-scrollbar { width: 0; height: 0; }
+  </style>
+</helmet>
+
+<div style="display: flex; flex-direction: column; height: 100vh; overflow: hidden; background: #f5f6fa; max-width: 480px; margin: 0 auto; position: relative;">
+
+  <!-- ═══════════ 頂欄 ═══════════ -->
+  <header style="background: #1a2332; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; min-height: 56px; flex-shrink: 0;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <span style="font-size: 24px;">⚖️</span>
+      <div>
+        <div style="font-size: 16px; font-weight: 700; color: #ffffff; letter-spacing: 1px;">智研</div>
+        <div style="font-size: 10px; color: #8b9ab0; letter-spacing: 2px;">AI 法律系統</div>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span style="font-size: 11px; color: #c9a84c; background: rgba(201,168,76,0.15); padding: 3px 10px; border-radius: 12px;">{{ providerLabel }}</span>
+      <button onClick="{{ goSettings }}" style="width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #c8d0dc;" style-hover="background: rgba(255,255,255,0.08);">⚙️</button>
+    </div>
+  </header>
+
+  <!-- ═══════════ 頁面容器 ═══════════ -->
+  <div style="flex: 1; overflow: hidden; display: flex; flex-direction: column;">
+
+    <!-- ── 法律諮詢 ── -->
+    <sc-if value="{{ showChat }}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; flex-direction: column; flex: 1; overflow: hidden;" data-screen-label="法律諮詢">
+        <div id="chatScroll" style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px;">
+
+          <sc-if value="{{ chatEmpty }}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 16px 24px; animation: fadeIn 0.5s ease;">
+              <div style="font-size: 56px; margin-bottom: 12px;">⚖️</div>
+              <h2 style="font-size: 22px; font-weight: 700; color: #1a2332; margin-bottom: 6px;">智研 AI 法律系統</h2>
+              <p style="color: #6b7280; font-size: 13px; max-width: 320px; margin-bottom: 24px;">台灣法律 AI 研究助手 · 強制引用 · 安全優先</p>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                <sc-for list="{{ suggestions }}" as="sug" hint-placeholder-count="4">
+                  <button onClick="{{ sug.ask }}" style="padding: 9px 16px; border: 1px solid #e5e7eb; border-radius: 20px; font-size: 13px; color: #6b7280; background: #ffffff; transition: all 0.2s;" style-hover="border-color: #c9a84c; color: #c9a84c; background: rgba(201,168,76,0.05);">{{ sug.text }}</button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-for list="{{ chatMessages }}" as="msg" hint-placeholder-count="0">
+            <div style="{{ msg.rowStyle }}">
+              <div style="{{ msg.avatarStyle }}">{{ msg.avatar }}</div>
+              <div style="{{ msg.bubbleStyle }}">{{ msg.node }}</div>
+            </div>
+          </sc-for>
+
+          <sc-if value="{{ chatLoading }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; gap: 10px; align-self: flex-start; align-items: center;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(201,168,76,0.15); display: flex; align-items: center; justify-content: center; font-size: 16px;">⚖️</div>
+              <div style="display: flex; align-items: center; gap: 8px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; border-bottom-left-radius: 4px; padding: 10px 16px;">
+                <div style="width: 16px; height: 16px; border: 2px solid #e5e7eb; border-top-color: #c9a84c; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+                <span style="font-size: 13px; color: #6b7280;">智研分析中...</span>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="padding: 10px 16px; background: #ffffff; border-top: 1px solid #e5e7eb; flex-shrink: 0;">
+          <div style="display: flex; align-items: flex-end; gap: 8px; border: 1px solid #e5e7eb; border-radius: 12px; padding: 6px 6px 6px 14px;" style-focus-within="border-color: #c9a84c; box-shadow: 0 0 0 3px rgba(201,168,76,0.1);">
+            <textarea value="{{ chatInput }}" onChange="{{ onChatInput }}" onKeyDown="{{ onChatKeyDown }}" placeholder="輸入您的法律問題..." rows="1" style="flex: 1; border: none; outline: none; resize: none; max-height: 100px; font-size: 14px; line-height: 1.5; background: transparent;"></textarea>
+            <button onClick="{{ sendChat }}" style="{{ sendBtnStyle }}">➤</button>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+            <span style="font-size: 10px; color: #9ca3af;">本系統僅供參考，不構成法律意見。</span>
+            <button onClick="{{ newChat }}" style="font-size: 11px; color: #c9a84c;">🆕 新對話</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ── 智慧搜尋 ── -->
+    <sc-if value="{{ showSearch }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; flex: 1; overflow-y: auto; padding: 16px; gap: 12px;" data-screen-label="智慧搜尋">
+        <div style="display: flex; gap: 8px;">
+          <input value="{{ searchInput }}" onChange="{{ onSearchInput }}" onKeyDown="{{ onSearchKeyDown }}" type="text" placeholder="搜尋判決書、法規、條文..." style="flex: 1; padding: 11px 14px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; outline: none; background: #ffffff;">
+          <button onClick="{{ doSearch }}" style="padding: 11px 18px; background: #1a2332; color: #ffffff; border-radius: 10px; font-size: 14px; font-weight: 600;" style-hover="opacity: 0.9;">搜尋</button>
+        </div>
+        <div style="display: flex; gap: 8px; overflow-x: auto;">
+          <sc-for list="{{ searchTabs }}" as="tab" hint-placeholder-count="4">
+            <button onClick="{{ tab.select }}" style="{{ tab.style }}">{{ tab.label }}</button>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ searchIdle }}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; flex-direction: column; align-items: center; padding: 60px 20px; text-align: center;">
+            <div style="font-size: 44px; margin-bottom: 12px;">🔍</div>
+            <p style="color: #6b7280; font-size: 14px; margin-bottom: 4px;">輸入關鍵字搜尋法律資料庫</p>
+            <p style="color: #9ca3af; font-size: 12px;">例如：公然侮辱、勞動基準法第 84 條、車禍過失</p>
+          </div>
+        </sc-if>
+
+        <sc-for list="{{ searchResults }}" as="r" hint-placeholder-count="0">
+          <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 14px; animation: fadeIn 0.3s ease;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <span style="{{ r.tagStyle }}">{{ r.tag }}</span>
+              <span style="font-size: 11px; color: #9ca3af;">{{ r.meta }}</span>
+            </div>
+            <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">{{ r.title }}</div>
+            <p style="font-size: 12px; color: #6b7280; line-height: 1.6;">{{ r.excerpt }}</p>
+            <div style="display: flex; gap: 8px; margin-top: 10px;">
+              <button onClick="{{ r.summarize }}" style="font-size: 12px; color: #c9a84c; padding: 5px 12px; border: 1px solid rgba(201,168,76,0.4); border-radius: 6px;" style-hover="background: rgba(201,168,76,0.08);">📋 AI 摘要</button>
+              <button onClick="{{ r.askAI }}" style="font-size: 12px; color: #6b7280; padding: 5px 12px; border: 1px solid #e5e7eb; border-radius: 6px;" style-hover="border-color: #c9a84c; color: #c9a84c;">💬 詢問 AI</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- ── 合約產生 ── -->
+    <sc-if value="{{ showContract }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; flex: 1; overflow-y: auto; padding: 16px; gap: 12px;" data-screen-label="合約產生">
+        <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px;">
+          <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">選擇合約類型</h2>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <sc-for list="{{ contractTypes }}" as="ct" hint-placeholder-count="3">
+              <button onClick="{{ ct.select }}" style="{{ ct.style }}">
+                <div style="font-weight: 600; margin-bottom: 2px; font-size: 14px;">{{ ct.title }}</div>
+                <div style="font-size: 12px; color: #6b7280;">{{ ct.desc }}</div>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+          <h2 style="font-size: 16px; font-weight: 600;">合約資訊</h2>
+          <div>
+            <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 5px;">甲方名稱</label>
+            <input value="{{ partyA }}" onChange="{{ onPartyA }}" type="text" placeholder="例：台北科技有限公司" style="width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; outline: none;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 5px;">乙方名稱</label>
+            <input value="{{ partyB }}" onChange="{{ onPartyB }}" type="text" placeholder="例：合作方公司或個人" style="width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; outline: none;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 5px;">有效期限</label>
+            <select value="{{ contractTerm }}" onChange="{{ onContractTerm }}" style="width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; outline: none; background: #ffffff;">
+              <option value="1 年">1 年</option>
+              <option value="2 年">2 年</option>
+              <option value="3 年">3 年</option>
+              <option value="5 年">5 年</option>
+              <option value="無期限">無期限</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 5px;">特殊需求（選填）</label>
+            <textarea value="{{ contractReq }}" onChange="{{ onContractReq }}" placeholder="例：加入競業禁止條款、違約金新臺幣五十萬元..." style="width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; min-height: 70px; resize: vertical; outline: none;"></textarea>
+          </div>
+          <button onClick="{{ generateContract }}" style="{{ contractBtnStyle }}">{{ contractBtnLabel }}</button>
+        </div>
+
+        <sc-if value="{{ hasContractResult }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px; animation: fadeIn 0.3s ease;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <h2 style="font-size: 16px; font-weight: 600;">合約草稿</h2>
+              <button onClick="{{ copyContract }}" style="font-size: 12px; color: #c9a84c; padding: 5px 12px; border: 1px solid rgba(201,168,76,0.4); border-radius: 6px;" style-hover="background: rgba(201,168,76,0.08);">{{ copyLabel }}</button>
+            </div>
+            <div style="background: #f5f6fa; padding: 14px; border-radius: 8px; font-size: 13px; line-height: 1.9; white-space: pre-wrap; max-height: 380px; overflow-y: auto;">{{ contractResult }}</div>
+            <p style="font-size: 10px; color: #9ca3af; margin-top: 8px;">本草稿由 AI 生成，僅供參考，正式簽署前請諮詢專業律師。</p>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- ── 法規監控 ── -->
+    <sc-if value="{{ showMonitor }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; flex: 1; overflow-y: auto; padding: 16px; gap: 12px;" data-screen-label="法規監控">
+        <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px;">
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;">
+            <div style="text-align: center;"><div style="font-size: 26px; font-weight: bold; color: #2563eb;">12</div><div style="font-size: 11px; color: #6b7280;">追蹤中</div></div>
+            <div style="text-align: center;"><div style="font-size: 26px; font-weight: bold; color: #22c55e;">8</div><div style="font-size: 11px; color: #6b7280;">無異動</div></div>
+            <div style="text-align: center;"><div style="font-size: 26px; font-weight: bold; color: #f59e0b;">3</div><div style="font-size: 11px; color: #6b7280;">待確認</div></div>
+            <div style="text-align: center;"><div style="font-size: 26px; font-weight: bold; color: #ef4444;">1</div><div style="font-size: 11px; color: #6b7280;">有異動</div></div>
+          </div>
+          <div style="border-top: 1px solid #e5e7eb; padding-top: 10px; display: flex; justify-content: space-around; font-size: 12px; color: #6b7280;">
+            <span>索引：47,001 筆</span>
+            <span>近 7 天異動：3 部</span>
+          </div>
+        </div>
+
+        <button onClick="{{ runCheck }}" style="{{ checkBtnStyle }}">{{ checkBtnLabel }}</button>
+
+        <div style="font-size: 14px; font-weight: 600; padding: 0 2px;">追蹤法規</div>
+        <sc-for list="{{ trackedLaws }}" as="law" hint-placeholder-count="4">
+          <button onClick="{{ law.open }}" style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 14px; display: flex; gap: 12px; align-items: center; width: 100%; text-align: left;" style-hover="box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <div style="{{ law.dotStyle }}"></div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-weight: 500; font-size: 14px; margin-bottom: 4px;">{{ law.name }}</div>
+              <div style="display: flex; gap: 6px;">
+                <span style="font-size: 11px; background: rgba(107,114,128,0.12); color: #6b7280; padding: 1px 8px; border-radius: 4px;">{{ law.level }}</span>
+                <span style="font-size: 11px; background: rgba(37,99,235,0.12); color: #2563eb; padding: 1px 8px; border-radius: 4px;">{{ law.freq }}</span>
+              </div>
+            </div>
+            <span style="color: #d1d5db; font-size: 18px;">›</span>
+          </button>
+        </sc-for>
+
+        <!-- 條文對照 -->
+        <sc-if value="{{ showDiff }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden; animation: fadeIn 0.3s ease;">
+            <div style="background: rgba(180,136,43,0.08); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <span style="background: rgba(180,136,43,0.15); color: #B4882B; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">第 54 條</span>
+                <span style="color: #B4882B; font-size: 12px;">（修正）· {{ diffLawName }}</span>
+              </div>
+              <button onClick="{{ closeDiff }}" style="color: #9ca3af; font-size: 16px;">✕</button>
+            </div>
+            <div style="padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 5px;">
+                  <div style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e;"></div>
+                  <span style="font-size: 12px; font-weight: bold; color: #2F7D4F;">修正條文</span>
+                </div>
+                <div style="background: rgba(47,125,79,0.05); border: 1px solid rgba(47,125,79,0.3); border-radius: 8px; padding: 12px; font-size: 13px; line-height: 1.8;">勞工年滿六十五歲，雇主得強制其退休。但對於擔任具有危險、堅強體力等特殊性質之工作者，得由事業單位報請中央主管機關予以調整，但不得少於五十五歲。</div>
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 5px;">
+                  <div style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></div>
+                  <span style="font-size: 12px; font-weight: bold; color: #B4452B;">現行條文</span>
+                </div>
+                <div style="background: rgba(180,69,43,0.05); border: 1px solid rgba(180,69,43,0.3); border-radius: 8px; padding: 12px; font-size: 13px; line-height: 1.8;">勞工非年滿六十五歲，雇主不得強制其退休。</div>
+              </div>
+              <button onClick="{{ summarizeDiff }}" style="padding: 10px; background: rgba(201,168,76,0.1); color: #c9a84c; border-radius: 8px; font-size: 13px; font-weight: 600;" style-hover="background: rgba(201,168,76,0.18);">📋 AI 摘要此異動</button>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- ── 更多（AI 摘要 / 徵信 / 設定入口）── -->
+    <sc-if value="{{ showMore }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; flex: 1; overflow-y: auto; padding: 16px; gap: 12px;" data-screen-label="更多">
+
+        <!-- AI 摘要 -->
+        <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+            <span style="font-size: 20px;">📋</span>
+            <h2 style="font-size: 16px; font-weight: 600;">AI 文件摘要</h2>
+          </div>
+          <textarea value="{{ summaryInput }}" onChange="{{ onSummaryInput }}" placeholder="貼上判決書、法規條文或合約內容，AI 將生成重點摘要..." style="width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; min-height: 90px; resize: vertical; outline: none; margin-bottom: 10px;"></textarea>
+          <button onClick="{{ generateSummary }}" style="{{ summaryBtnStyle }}">{{ summaryBtnLabel }}</button>
+          <sc-if value="{{ hasSummaryResult }}" hint-placeholder-val="{{ false }}">
+            <div style="background: #f5f6fa; padding: 12px; border-radius: 8px; font-size: 13px; line-height: 1.8; white-space: pre-wrap; margin-top: 10px; animation: fadeIn 0.3s ease;">{{ summaryResult }}</div>
+          </sc-if>
+        </div>
+
+        <!-- 徵信調查 -->
+        <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+            <span style="font-size: 20px;">🕵️</span>
+            <h2 style="font-size: 16px; font-weight: 600;">背景調查</h2>
+          </div>
+          <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+            <input value="{{ osintInput }}" onChange="{{ onOsintInput }}" type="text" placeholder="輸入公司統編或名稱..." style="flex: 1; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; outline: none;">
+            <button onClick="{{ runOsint }}" style="padding: 10px 16px; background: #1a2332; color: #ffffff; border-radius: 8px; font-size: 13px; font-weight: 600;" style-hover="opacity: 0.9;">調查</button>
+          </div>
+          <sc-if value="{{ hasOsintResult }}" hint-placeholder-val="{{ false }}">
+            <div style="background: #f5f6fa; padding: 12px; border-radius: 8px; font-size: 13px; line-height: 1.8; white-space: pre-wrap; animation: fadeIn 0.3s ease;">{{ osintResult }}</div>
+          </sc-if>
+          <p style="font-size: 10px; color: #9ca3af; margin-top: 8px;">資料來源：公開司法紀錄與商工登記。僅供合法用途查詢。</p>
+        </div>
+
+        <!-- 帳戶 -->
+        <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(201,168,76,0.15); display: flex; align-items: center; justify-content: center; font-size: 20px;">👤</div>
+            <div style="flex: 1;">
+              <div style="font-weight: 600; font-size: 14px;">謝小育</div>
+              <div style="font-size: 12px; color: #6b7280;">Lucien127@proton.me</div>
+            </div>
+            <button onClick="{{ goSettings }}" style="font-size: 12px; color: #c9a84c; padding: 6px 14px; border: 1px solid rgba(201,168,76,0.4); border-radius: 6px;" style-hover="background: rgba(201,168,76,0.08);">設定</button>
+          </div>
+        </div>
+
+        <p style="text-align: center; font-size: 11px; color: #9ca3af;">智研 AI 法律系統 · 第 1.0.0 版<br>本系統僅供參考，不構成法律意見。</p>
+      </div>
+    </sc-if>
+
+    <!-- ── 設定（LLM 供應商）── -->
+    <sc-if value="{{ showSettings }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; flex: 1; overflow-y: auto; padding: 16px; gap: 12px;" data-screen-label="設定">
+        <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px;">
+          <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">AI 模型供應商</h2>
+          <p style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">選擇對話所使用的大型語言模型</p>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <sc-for list="{{ providers }}" as="p" hint-placeholder-count="3">
+              <button onClick="{{ p.select }}" style="{{ p.cardStyle }}">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <div style="font-weight: 600; font-size: 14px;">{{ p.name }}</div>
+                    <div style="font-size: 12px; color: #6b7280;">{{ p.model }}</div>
+                  </div>
+                  <span style="{{ p.checkStyle }}">✓</span>
+                </div>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px;">
+          <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">API 金鑰</h2>
+          <p style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">金鑰僅儲存於您的裝置（localStorage），不會上傳。</p>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div>
+              <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 5px;">OpenAI 金鑰</label>
+              <input value="{{ keyOpenai }}" onChange="{{ onKeyOpenai }}" type="password" placeholder="sk-..." style="width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; outline: none;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 5px;">Claude（Anthropic）金鑰</label>
+              <input value="{{ keyClaude }}" onChange="{{ onKeyClaude }}" type="password" placeholder="sk-ant-..." style="width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; outline: none;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 5px;">DeepSeek 金鑰</label>
+              <input value="{{ keyDeepseek }}" onChange="{{ onKeyDeepseek }}" type="password" placeholder="sk-..." style="width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; outline: none;">
+            </div>
+          </div>
+          <button onClick="{{ saveSettings }}" style="width: 100%; margin-top: 14px; padding: 12px; background: #c9a84c; color: #ffffff; border-radius: 8px; font-size: 14px; font-weight: 600;" style-hover="background: #d4b85a;">{{ saveLabel }}</button>
+        </div>
+
+        <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px;">
+          <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 10px;">連線狀態</h2>
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #6b7280;">
+            <span style="{{ statusDotStyle }}"></span>
+            <span>{{ statusText }}</span>
+          </div>
+          <button onClick="{{ testConnection }}" style="width: 100%; margin-top: 12px; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; color: #6b7280;" style-hover="border-color: #c9a84c; color: #c9a84c;">{{ testLabel }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+
+  <!-- ═══════════ 底部分頁列 ═══════════ -->
+  <nav style="display: flex; background: #ffffff; border-top: 1px solid #e5e7eb; flex-shrink: 0; padding-bottom: env(safe-area-inset-bottom);">
+    <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="5">
+      <button onClick="{{ tab.select }}" style="{{ tab.style }}">
+        <span style="font-size: 20px;">{{ tab.icon }}</span>
+        <span style="font-size: 10px;">{{ tab.label }}</span>
+      </button>
+    </sc-for>
+  </nav>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;390px&quot;,&quot;height&quot;:&quot;844px&quot;}}">
+class Component extends DCLogic {
+  state = {
+    page: 'chat',
+    // 聊天
+    chatMessages: [],
+    chatInput: '',
+    chatLoading: false,
+    // 搜尋
+    searchInput: '',
+    searchTab: '全部',
+    searchResults: null,
+    // 合約
+    contractType: 'nda',
+    partyA: '',
+    partyB: '',
+    contractTerm: '1 年',
+    contractReq: '',
+    contractResult: '',
+    contractLoading: false,
+    copied: false,
+    // 監控
+    checking: false,
+    checkDone: false,
+    showDiff: false,
+    diffLawName: '',
+    // 摘要 / 徵信
+    summaryInput: '',
+    summaryResult: '',
+    summaryLoading: false,
+    osintInput: '',
+    osintResult: '',
+    // 設定
+    provider: 'deepseek',
+    keys: { openai: '', claude: '', deepseek: '' },
+    saved: false,
+    testing: false,
+    testResult: null,
+  };
+
+  PROVIDERS = {
+    openai:   { name: 'OpenAI',   model: 'gpt-4o-mini',       url: 'https://api.openai.com/v1/chat/completions' },
+    claude:   { name: 'Claude',   model: 'claude-sonnet-4-20250514', url: 'https://api.anthropic.com/v1/messages' },
+    deepseek: { name: 'DeepSeek', model: 'deepseek-chat',     url: 'https://api.deepseek.com/v1/chat/completions' },
+  };
+
+  SYSTEM_PROMPT = '你是「智研」，台灣法律 AI 研究助手。回答一律使用繁體中文（台灣用語）。引用法條時務必標明法規名稱與條號。每次回答結尾提醒：本回答僅供參考，不構成法律意見。';
+
+  componentDidMount() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('zhiyan_llm_settings') || 'null');
+      if (saved) {
+        this.setState({
+          provider: saved.provider || 'deepseek',
+          keys: { openai: '', claude: '', deepseek: '', ...(saved.keys || {}) },
+        });
+      }
+    } catch (e) { /* 忽略 */ }
+  }
+
+  // ═══ LLM 呼叫（三家供應商）═══
+  async callLLM(userText, systemPrompt) {
+    const provider = this.state.provider;
+    const cfg = this.PROVIDERS[provider];
+    const key = this.state.keys[provider];
+    const sys = systemPrompt || this.SYSTEM_PROMPT;
+
+    if (!key) {
+      throw new Error('尚未設定 ' + cfg.name + ' API 金鑰。請至「設定」頁面輸入金鑰。');
+    }
+
+    if (provider === 'claude') {
+      const res = await fetch(cfg.url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: cfg.model,
+          max_tokens: 2048,
+          system: sys,
+          messages: [{ role: 'user', content: userText }],
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error && err.error.message ? err.error.message : ('Claude 錯誤 HTTP ' + res.status));
+      }
+      const data = await res.json();
+      return data.content.map(b => b.text || '').join('');
+    }
+
+    // OpenAI / DeepSeek — OpenAI 相容格式
+    const res = await fetch(cfg.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + key,
+      },
+      body: JSON.stringify({
+        model: cfg.model,
+        temperature: 0.3,
+        max_tokens: 2048,
+        messages: [
+          { role: 'system', content: sys },
+          { role: 'user', content: userText },
+        ],
+      }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error && err.error.message ? err.error.message : (cfg.name + ' 錯誤 HTTP ' + res.status));
+    }
+    const data = await res.json();
+    return data.choices[0].message.content;
+  }
+
+  // ═══ 聊天 ═══
+  sendChat = async () => {
+    const text = this.state.chatInput.trim();
+    if (!text || this.state.chatLoading) return;
+    const msgs = [...this.state.chatMessages, { role: 'user', text }];
+    this.setState({ chatMessages: msgs, chatInput: '', chatLoading: true }, this.scrollChat);
+    try {
+      const reply = await this.callLLM(text);
+      this.setState({
+        chatMessages: [...this.state.chatMessages, { role: 'ai', text: reply }],
+        chatLoading: false,
+      }, this.scrollChat);
+    } catch (e) {
+      this.setState({
+        chatMessages: [...this.state.chatMessages, { role: 'ai', text: '❌ ' + e.message, isError: true }],
+        chatLoading: false,
+      }, this.scrollChat);
+    }
+  };
+
+  scrollChat = () => {
+    requestAnimationFrame(() => {
+      const el = document.getElementById('chatScroll');
+      if (el) el.scrollTop = el.scrollHeight;
+    });
+  };
+
+  // ═══ 搜尋（示範資料，可接後端 /api/search）═══
+  doSearch = () => {
+    const q = this.state.searchInput.trim();
+    if (!q) return;
+    this.setState({
+      searchResults: [
+        { tag: '判決', tagColor: '#2563eb', title: '臺灣高等法院 112 年度上易字第 1024 號刑事判決', meta: '112.08.15 · 刑事', excerpt: '被告於社群平台公開張貼文字辱罵告訴人，核其所為，係犯刑法第 309 條第 1 項之公然侮辱罪…' },
+        { tag: '法規', tagColor: '#B4882B', title: '刑法 第 309 條（公然侮辱罪）', meta: '法律 · 修正 20240731', excerpt: '公然侮辱人者，處拘役或九千元以下罰金。以強暴犯前項之罪者，處一年以下有期徒刑、拘役或一萬五千元以下罰金。' },
+        { tag: '判決', tagColor: '#2563eb', title: '臺灣臺北地方法院 113 年度訴字第 892 號民事判決', meta: '113.03.22 · 民事', excerpt: '按不法侵害他人之名譽者，被害人得請求賠償相當之金額，民法第 195 條第 1 項定有明文…' },
+      ],
+    });
+  };
+
+  // ═══ 合約 ═══
+  CONTRACT_META = {
+    nda:       { title: '📄 保密協議（NDA）', desc: '商業合作、投資評估等保密場景', prompt: '保密協議（NDA）' },
+    service:   { title: '🔧 服務契約', desc: '提供服務時的條款與責任約定', prompt: '服務契約' },
+    financing: { title: '💰 融資借貸契約', desc: '貸款、融資、動產設定等金融交易', prompt: '融資借貸契約' },
+  };
+
+  generateContract = async () => {
+    const { partyA, partyB, contractType, contractTerm, contractReq } = this.state;
+    if (!partyA.trim() || !partyB.trim()) { alert('請填寫甲乙方名稱'); return; }
+    if (this.state.contractLoading) return;
+    this.setState({ contractLoading: true, contractResult: '' });
+    const meta = this.CONTRACT_META[contractType];
+    const prompt = '請以台灣法律為準據法，草擬一份「' + meta.prompt + '」。甲方：' + partyA + '；乙方：' + partyB + '；有效期限：' + contractTerm + '。' + (contractReq ? '特殊需求：' + contractReq + '。' : '') + '請輸出完整條文（含首部、定義、義務、違約、準據法與管轄、簽署欄），使用繁體中文與台灣法律用語。';
+    try {
+      const result = await this.callLLM(prompt, '你是台灣執業律師，專精契約草擬。輸出純文字合約條文，不要 markdown 符號。');
+      this.setState({ contractResult: result, contractLoading: false });
+    } catch (e) {
+      this.setState({ contractResult: '❌ ' + e.message, contractLoading: false });
+    }
+  };
+
+  copyContract = () => {
+    navigator.clipboard.writeText(this.state.contractResult).then(() => {
+      this.setState({ copied: true });
+      setTimeout(() => this.setState({ copied: false }), 2000);
+    });
+  };
+
+  // ═══ 監控 ═══
+  runCheck = () => {
+    if (this.state.checking) return;
+    this.setState({ checking: true });
+    setTimeout(() => this.setState({ checking: false, checkDone: true }), 1800);
+  };
+
+  // ═══ 摘要 ═══
+  generateSummary = async () => {
+    const text = this.state.summaryInput.trim();
+    if (!text || this.state.summaryLoading) return;
+    this.setState({ summaryLoading: true, summaryResult: '' });
+    try {
+      const result = await this.callLLM('請將以下法律文件整理為重點摘要（條列式，繁體中文）：\n\n' + text, '你是台灣法律文件摘要助手。輸出：一、案由或主旨；二、關鍵事實；三、法律依據；四、結論或建議。純文字，不用 markdown。');
+      this.setState({ summaryResult: result, summaryLoading: false });
+    } catch (e) {
+      this.setState({ summaryResult: '❌ ' + e.message, summaryLoading: false });
+    }
+  };
+
+  // ═══ 徵信 ═══
+  runOsint = () => {
+    const q = this.state.osintInput.trim();
+    if (!q) return;
+    this.setState({
+      osintResult: '📊 查詢對象：' + q + '\n\n・商工登記：需串接經濟部商工登記公示資料 API\n・司法紀錄：需串接司法院裁判書系統 API\n・票據信用：需串接票交所查詢服務\n\n（此模組待後端 API 上線後啟用，端點：POST /api/osint/investigate）',
+    });
+  };
+
+  // ═══ 設定 ═══
+  saveSettings = () => {
+    localStorage.setItem('zhiyan_llm_settings', JSON.stringify({
+      provider: this.state.provider,
+      keys: this.state.keys,
+    }));
+    this.setState({ saved: true });
+    setTimeout(() => this.setState({ saved: false }), 2000);
+  };
+
+  testConnection = async () => {
+    if (this.state.testing) return;
+    this.setState({ testing: true, testResult: null });
+    try {
+      await this.callLLM('請回覆「連線成功」四個字。', '你是連線測試助手。');
+      this.setState({ testing: false, testResult: 'ok' });
+    } catch (e) {
+      this.setState({ testing: false, testResult: e.message });
+    }
+  };
+
+  setKey = (provider, value) => {
+    this.setState({ keys: { ...this.state.keys, [provider]: value } });
+  };
+
+  // ═══ renderVals ═══
+  renderVals() {
+    const s = this.state;
+    const page = s.page;
+    const cfg = this.PROVIDERS[s.provider];
+
+    // 分頁列
+    const tabDefs = [
+      { id: 'chat', icon: '💬', label: '諮詢' },
+      { id: 'search', icon: '🔍', label: '搜尋' },
+      { id: 'contract', icon: '📄', label: '合約' },
+      { id: 'monitor', icon: '📊', label: '監控' },
+      { id: 'more', icon: '☰', label: '更多' },
+    ];
+    const tabs = tabDefs.map(t => ({
+      ...t,
+      select: () => this.setState({ page: t.id }),
+      style: 'flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0 10px; transition: color 0.15s; color: ' + ((page === t.id || (t.id === 'more' && page === 'settings')) ? '#c9a84c' : '#9ca3af') + ';',
+    }));
+
+    // 聊天訊息
+    const chatMessages = s.chatMessages.map(m => {
+      const isUser = m.role === 'user';
+      return {
+        avatar: isUser ? '👤' : '⚖️',
+        rowStyle: 'display: flex; gap: 10px; max-width: 90%; animation: messageIn 0.3s ease;' + (isUser ? 'align-self: flex-end; flex-direction: row-reverse;' : 'align-self: flex-start;'),
+        avatarStyle: 'width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; background: ' + (isUser ? '#1a2332' : 'rgba(201,168,76,0.15)') + ';',
+        bubbleStyle: 'padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.7; white-space: pre-wrap; word-break: break-word;' + (isUser
+          ? 'background: #e8edf5; border-bottom-right-radius: 4px;'
+          : (m.isError ? 'background: #fef2f2; border: 1px solid #fca5a5; border-bottom-left-radius: 4px;' : 'background: #ffffff; border: 1px solid #e5e7eb; border-bottom-left-radius: 4px;')),
+        node: m.text,
+      };
+    });
+
+    const suggestions = ['公然侮辱罪的構成要件是什麼？', '離婚訴訟需要準備哪些文件？', '車禍後如何申請保險理賠？', '勞動契約終止的合法程序'].map(text => ({
+      text,
+      ask: () => this.setState({ chatInput: text }, this.sendChat),
+    }));
+
+    // 搜尋分頁
+    const searchTabs = ['全部', '判決書', '法規', '條文'].map(label => ({
+      label,
+      select: () => this.setState({ searchTab: label }),
+      style: 'padding: 7px 14px; border-radius: 20px; font-size: 12px; white-space: nowrap; transition: all 0.15s;' + (s.searchTab === label
+        ? 'background: #c9a84c; color: #ffffff;'
+        : 'background: #ffffff; color: #6b7280; border: 1px solid #e5e7eb;'),
+    }));
+
+    const searchResults = (s.searchResults || []).map(r => ({
+      ...r,
+      tagStyle: 'font-size: 11px; padding: 2px 8px; border-radius: 4px; background: ' + r.tagColor + '1f; color: ' + r.tagColor + ';',
+      summarize: () => this.setState({ page: 'more', summaryInput: r.title + '\n' + r.excerpt }),
+      askAI: () => this.setState({ page: 'chat', chatInput: '請解釋：' + r.title }),
+    }));
+
+    // 合約類型卡片
+    const contractTypes = Object.entries(this.CONTRACT_META).map(([id, meta]) => ({
+      title: meta.title,
+      desc: meta.desc,
+      select: () => this.setState({ contractType: id }),
+      style: 'padding: 12px 14px; border-radius: 8px; text-align: left; width: 100%; transition: all 0.15s;' + (s.contractType === id
+        ? 'border: 2px solid #c9a84c; background: rgba(201,168,76,0.08);'
+        : 'border: 1px solid #e5e7eb; background: #ffffff;'),
+    }));
+
+    // 監控法規
+    const lawDefs = [
+      { name: '刑法', level: '法律', freq: '每週查核', color: '#22c55e' },
+      { name: '民法', level: '法律', freq: '每週查核', color: '#f59e0b' },
+      { name: '勞動基準法', level: '法律', freq: '每日查核', color: '#ef4444' },
+      { name: '公司法', level: '法律', freq: '每週查核', color: '#22c55e' },
+      { name: '動產擔保交易法', level: '法律', freq: '每月查核', color: '#22c55e' },
+    ];
+    const trackedLaws = lawDefs.map(l => ({
+      ...l,
+      dotStyle: 'width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; background: ' + l.color + ';',
+      open: () => this.setState({ showDiff: true, diffLawName: l.name }),
+    }));
+
+    // 設定供應商卡片
+    const providers = Object.entries(this.PROVIDERS).map(([id, p]) => ({
+      name: p.name,
+      model: p.model,
+      select: () => this.setState({ provider: id }),
+      cardStyle: 'padding: 12px 14px; border-radius: 8px; text-align: left; width: 100%; transition: all 0.15s;' + (s.provider === id
+        ? 'border: 2px solid #c9a84c; background: rgba(201,168,76,0.08);'
+        : 'border: 1px solid #e5e7eb; background: #ffffff;'),
+      checkStyle: 'font-size: 16px; font-weight: bold; color: ' + (s.provider === id ? '#c9a84c' : 'transparent') + ';',
+    }));
+
+    const hasKey = !!s.keys[s.provider];
+    let statusText, statusColor;
+    if (s.testing) { statusText = '測試中…'; statusColor = '#f59e0b'; }
+    else if (s.testResult === 'ok') { statusText = cfg.name + ' 連線成功'; statusColor = '#22c55e'; }
+    else if (s.testResult) { statusText = s.testResult; statusColor = '#ef4444'; }
+    else if (hasKey) { statusText = '已設定 ' + cfg.name + ' 金鑰，尚未測試'; statusColor = '#f59e0b'; }
+    else { statusText = '尚未設定 ' + cfg.name + ' 金鑰'; statusColor = '#9ca3af'; }
+
+    return {
+      // 導航
+      tabs,
+      showChat: page === 'chat',
+      showSearch: page === 'search',
+      showContract: page === 'contract',
+      showMonitor: page === 'monitor',
+      showMore: page === 'more',
+      showSettings: page === 'settings',
+      goSettings: () => this.setState({ page: 'settings' }),
+      providerLabel: cfg.name,
+
+      // 聊天
+      chatMessages,
+      chatEmpty: s.chatMessages.length === 0 && !s.chatLoading,
+      chatLoading: s.chatLoading,
+      chatInput: s.chatInput,
+      onChatInput: (e) => this.setState({ chatInput: e.target.value }),
+      onChatKeyDown: (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.sendChat(); } },
+      sendChat: this.sendChat,
+      newChat: () => this.setState({ chatMessages: [], chatInput: '' }),
+      sendBtnStyle: 'width: 36px; height: 36px; border-radius: 50%; background: #c9a84c; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; transition: all 0.15s;' + ((s.chatInput.trim() && !s.chatLoading) ? '' : 'opacity: 0.4; cursor: not-allowed;'),
+      suggestions,
+
+      // 搜尋
+      searchInput: s.searchInput,
+      onSearchInput: (e) => this.setState({ searchInput: e.target.value }),
+      onSearchKeyDown: (e) => { if (e.key === 'Enter') this.doSearch(); },
+      doSearch: this.doSearch,
+      searchTabs,
+      searchIdle: s.searchResults === null,
+      searchResults,
+
+      // 合約
+      contractTypes,
+      partyA: s.partyA, onPartyA: (e) => this.setState({ partyA: e.target.value }),
+      partyB: s.partyB, onPartyB: (e) => this.setState({ partyB: e.target.value }),
+      contractTerm: s.contractTerm, onContractTerm: (e) => this.setState({ contractTerm: e.target.value }),
+      contractReq: s.contractReq, onContractReq: (e) => this.setState({ contractReq: e.target.value }),
+      generateContract: this.generateContract,
+      contractBtnLabel: s.contractLoading ? '生成中…' : '⚖️ AI 生成合約',
+      contractBtnStyle: 'width: 100%; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 600; transition: all 0.15s; background: #1a2332; color: #ffffff;' + (s.contractLoading ? 'opacity: 0.5; cursor: wait;' : ''),
+      hasContractResult: !!s.contractResult,
+      contractResult: s.contractResult,
+      copyContract: this.copyContract,
+      copyLabel: s.copied ? '✓ 已複製' : '複製全文',
+
+      // 監控
+      runCheck: this.runCheck,
+      checkBtnLabel: s.checking ? '查核中…' : (s.checkDone ? '✓ 查核完成：12 部，1 部有異動' : '🔄 執行查核'),
+      checkBtnStyle: 'width: 100%; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 600; transition: all 0.15s;' + (s.checkDone ? 'background: rgba(34,197,94,0.12); color: #15803d;' : 'background: #1a2332; color: #ffffff;') + (s.checking ? 'opacity: 0.5; cursor: wait;' : ''),
+      trackedLaws,
+      showDiff: s.showDiff,
+      diffLawName: s.diffLawName,
+      closeDiff: () => this.setState({ showDiff: false }),
+      summarizeDiff: () => this.setState({ page: 'more', summaryInput: '勞動基準法第 54 條修正：\n修正後：勞工年滿六十五歲，雇主得強制其退休。但對於擔任具有危險、堅強體力等特殊性質之工作者，得由事業單位報請中央主管機關予以調整，但不得少於五十五歲。\n修正前：勞工非年滿六十五歲，雇主不得強制其退休。' }),
+
+      // 摘要
+      summaryInput: s.summaryInput,
+      onSummaryInput: (e) => this.setState({ summaryInput: e.target.value }),
+      generateSummary: this.generateSummary,
+      summaryBtnLabel: s.summaryLoading ? '摘要生成中…' : '生成摘要',
+      summaryBtnStyle: 'width: 100%; padding: 11px; border-radius: 8px; font-size: 14px; font-weight: 600; background: #1a2332; color: #ffffff; transition: all 0.15s;' + (s.summaryLoading ? 'opacity: 0.5; cursor: wait;' : ''),
+      hasSummaryResult: !!s.summaryResult,
+      summaryResult: s.summaryResult,
+
+      // 徵信
+      osintInput: s.osintInput,
+      onOsintInput: (e) => this.setState({ osintInput: e.target.value }),
+      runOsint: this.runOsint,
+      hasOsintResult: !!s.osintResult,
+      osintResult: s.osintResult,
+
+      // 設定
+      providers,
+      keyOpenai: s.keys.openai, onKeyOpenai: (e) => this.setKey('openai', e.target.value),
+      keyClaude: s.keys.claude, onKeyClaude: (e) => this.setKey('claude', e.target.value),
+      keyDeepseek: s.keys.deepseek, onKeyDeepseek: (e) => this.setKey('deepseek', e.target.value),
+      saveSettings: this.saveSettings,
+      saveLabel: s.saved ? '✓ 已儲存' : '儲存設定',
+      testConnection: this.testConnection,
+      testLabel: s.testing ? '測試中…' : '測試連線',
+      statusText,
+      statusDotStyle: 'width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; background: ' + statusColor + ';',
+    };
+  }
+}
+</script>
+</body>
+</html>
