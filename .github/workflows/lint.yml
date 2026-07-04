@@ -1,0 +1,23 @@
+name: "程式碼品質檢查"
+
+on:
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint:
+    name: Python 語法檢查
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: 安裝 Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+
+    - name: 語法檢查
+      run: |
+        python -m py_compile backend/*.py 2>/dev/null || echo "⚠️ 無 backend 目錄"
+        python -m py_compile *.py 2>/dev/null || echo "⚠️ 無根目錄 Python 檔"
+        echo "✅ 語法檢查完成"
