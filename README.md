@@ -1,3 +1,5 @@
+[![CodeQL](https://github.com/Lucien-1127/zhiyan-mvp/actions/workflows/codeql.yml/badge.svg)](https://github.com/Lucien-1127/zhiyan-mvp/actions/workflows/codeql.yml)
+
 # 智研 AI 法律系統 — MVP 應用
 
 完全繁體中文化的台灣法律 AI 助手，集成聊天諮詢、合約產生、法規監控、智慧搜尋、背景調查和文件摘要功能。
