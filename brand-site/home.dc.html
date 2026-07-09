@@ -6,7 +6,26 @@
 <meta name="description" content="謝 Lucien · 智研 — 把你腦袋裡的想法，變成跑得動的系統。開源法律 AI 研究，數據全部公開可查。">
 <meta property="og:title" content="謝 Lucien · 智研 — 系統整合顧問">
 <meta property="og:description" content="有想法但卡在實作？免費聊聊，覺得可以再做。開源法律 AI，每個數字都查得到出處。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zhiyan.dev/">
+<meta property="og:locale" content="zh_TW">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://zhiyan.dev/">
 <title>謝 Lucien · 智研 — 把想法變成能用的系統</title>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "謝 Lucien · 智研",
+  "description": "系統整合顧問 — AI 法律系統、重複性工作自動化、AI 對話調校",
+  "url": "https://zhiyan.dev/",
+  "email": "Lucien127@proton.me",
+  "telephone": "+886-966-130-460",
+  "areaServed": "TW",
+  "address": { "@type": "PostalAddress", "addressLocality": "桃園市", "addressCountry": "TW" },
+  "founder": { "@type": "Person", "name": "謝 Lucien", "sameAs": "https://github.com/Lucien-1127" }
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -25,6 +44,11 @@ h1,h2,h3,.serif{font-family:var(--serif)}
 .logo{display:flex;align-items:baseline;gap:7px;font-family:var(--serif)}
 .logo .n{font-weight:900;font-size:19px;color:var(--navy)}.logo .d{color:var(--gold)}.logo .b{font-weight:700;font-size:19px;color:var(--muted)}
 .nav-r{display:flex;align-items:center;gap:24px;font-size:14px}
+.burger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:42px;height:42px;border-radius:10px;z-index:60;position:relative}
+.burger span{display:block;width:22px;height:2px;background:var(--navy);border-radius:2px;transition:transform .3s ease,opacity .3s ease}
+.burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 .nav-r>a:not(.gh):not(.cta){color:var(--muted);font-weight:500}.nav-r>a:not(.gh):not(.cta):hover{color:var(--navy)}
 .gh{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;color:var(--navy)}
 .gh:hover{border-color:var(--gold);background:var(--gold-10)}.gh .star{color:var(--gold)}
@@ -68,15 +92,30 @@ h1,h2,h3,.serif{font-family:var(--serif)}
 .zx-in{display:flex;align-items:flex-end;gap:8px;padding:12px 14px;border-top:1px solid var(--line);background:var(--white)}
 .zx-ta{flex:1;border:1.5px solid var(--line);border-radius:22px;padding:10px 16px;font-size:14px;font-family:inherit;outline:none;background:var(--paper)}
 .zx-ta:focus{border-color:var(--gold);background:var(--white)}
-.zx-go{width:42px;height:42px;border-radius:50%;background:var(--gold);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center}
+.zx-go{width:42px;height:42px;border-radius:50%;background:var(--gold);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(201,168,76,.4)}
+.zx-go:disabled{opacity:.45;cursor:not-allowed}
+.zx-msg{display:flex;gap:8px;align-items:flex-end;margin-bottom:8px}
+.zx-msg .zx-av{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#e8c56a);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.zx-msg .zx-bb{max-width:82%;padding:10px 14px;border-radius:15px;border-bottom-left-radius:4px;font-size:13.5px;background:var(--white);box-shadow:var(--sh-1);white-space:pre-wrap;word-break:break-word}
+.zx-msg.user{flex-direction:row-reverse}
+.zx-msg.user .zx-bb{background:var(--navy);color:#fff;border-bottom-left-radius:15px;border-bottom-right-radius:4px}
+.zx-typing{display:inline-flex;gap:4px;padding:12px 14px;border-radius:15px;border-bottom-left-radius:4px;background:var(--white);box-shadow:var(--sh-1)}
+.zx-typing span{width:6px;height:6px;border-radius:50%;background:var(--faint);animation:zxBlink 1.2s infinite}
+.zx-typing span:nth-child(2){animation-delay:.2s}.zx-typing span:nth-child(3){animation-delay:.4s}
+@keyframes zxBlink{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+.zx-chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px 34px}
+.zx-chip{font-size:12px;color:var(--gold);border:1px solid var(--gold);border-radius:999px;padding:5px 12px;background:var(--white);transition:background .15s,color .15s}
+.zx-chip:hover{background:var(--gold);color:#fff}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv{opacity:1;transform:none;transition:none}.zx-typing span{animation:none}}
 @media(max-width:1000px){
 .hero-g{grid-template-columns:1fr;gap:40px}
 .final-g{grid-template-columns:1fr;gap:32px}
 }
 @media(max-width:760px){
-.nav-r{position:fixed;top:0;right:0;z-index:55;width:270px;height:100vh;background:var(--white);flex-direction:column;padding:92px 26px;transform:translateX(100%);transition:transform .35s ease}
+.nav-r{position:fixed;top:0;right:0;z-index:55;width:270px;height:100vh;background:var(--white);flex-direction:column;padding:92px 26px;transform:translateX(100%);transition:transform .35s ease;box-shadow:-8px 0 32px rgba(26,35,50,.12)}
 .nav-r.open{transform:none}
 .burger{display:flex}
+#zx-panel{width:calc(100vw - 24px);right:12px;height:min(610px,calc(100dvh - 130px))}
 .proof-g{grid-template-columns:1fr 1fr}
 .about-c{grid-template-columns:1fr;text-align:center}
 .star-cta{flex-direction:column;text-align:center}
@@ -228,16 +267,19 @@ h1,h2,h3,.serif{font-family:var(--serif)}
     <button style="width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.1);color:#fff;display:flex;align-items:center;justify-content:center" onclick="zxToggle()">✕</button>
   </div>
   <div class="zx-bd" id="zxBd">
-    <div style="align-self:center;font-size:11px;color:var(--faint);background:rgba(0,0,0,.05);padding:3px 12px;border-radius:999px;margin:4px 0 8px">今天</div>
-    <div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:8px">
-      <div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#e8c56a);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">🤖</div>
-      <div style="max-width:82%"><div style="padding:10px 14px;border-radius:15px;border-bottom-left-radius:4px;font-size:13.5px;background:var(--white);box-shadow:var(--sh-1)">嗨！我是智小研 👋 想了解什麼都可以問～</div></div>
+    <div style="text-align:center;font-size:11px;color:var(--faint);margin:4px 0 8px"><span style="background:rgba(0,0,0,.05);padding:3px 12px;border-radius:999px">今天</span></div>
+    <div class="zx-msg"><div class="zx-av">🤖</div><div class="zx-bb">嗨！我是智小研 👋 想了解什麼都可以問～</div></div>
+    <div class="zx-chips" id="zxChips">
+      <button class="zx-chip" onclick="zxAsk('我想做一個自動化系統，費用大概多少？')">費用怎麼算？</button>
+      <button class="zx-chip" onclick="zxAsk('你們能幫忙做哪些事？')">能做什麼？</button>
+      <button class="zx-chip" onclick="zxAsk('一個簡單的專案大概多久能做好？')">要做多久？</button>
+      <button class="zx-chip" onclick="zxAsk('要怎麼直接聯絡謝 Lucien？')">聯絡方式</button>
     </div>
   </div>
   <div class="zx-in">
     <textarea class="zx-ta" id="zxTa" rows="1" placeholder="輸入你的問題..." style="flex:1;border:1.5px solid var(--line);border-radius:22px;padding:10px 16px;font-size:14px;font-family:inherit;outline:none;background:var(--paper);resize:none;max-height:96px"
-      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();alert('客服系統連線中，請直接寄信到 Lucien127@proton.me');}"></textarea>
-    <button style="width:42px;height:42px;border-radius:50%;background:var(--gold);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(201,168,76,.4)" onclick="alert('客服系統連線中，請直接寄信到 Lucien127@proton.me')">➤</button>
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();zxSend();}"></textarea>
+    <button class="zx-go" id="zxGo" aria-label="送出" onclick="zxSend()">➤</button>
   </div>
 </div>
 
@@ -257,11 +299,93 @@ const io = new IntersectionObserver(es => es.forEach(e => {
   if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
 }), {threshold:.08});
 document.querySelectorAll('.rv').forEach(el => io.observe(el));
-// Chat widget
-let zxOpen = false;
+// ── 智小研 AI 客服（串接 /api/ai/，離線時退回 FAQ）──
+let zxIsOpen = false;
+let zxSending = false;
+const zxHistory = [];
+const ZX_SYSTEM = '你是「智小研」，謝 Lucien（智研）官網的 AI 客服。用繁體中文（台灣用語）、親切簡短地回答，每次回覆盡量在 120 字以內。\n' +
+  '關於謝 Lucien：台灣桃園的系統整合顧問，一個人全包。服務項目：法律工作 AI 幫手（審合約、查法條、法規監控）、重複性工作自動化、救回不好用的系統、影音內容自動生產線、AI 對話調校。\n' +
+  '費用：先聊需求再報價，第一次討論完全免費；簡單的專案幾千元台幣起，完整系統依規模報價。時程：簡單的 1–2 週；複雜的會先做小版本確認方向。隨時可以停止合作，成果全部交付。\n' +
+  '聯絡方式：Email Lucien127@proton.me、LINE ID vbn920、電話 0966-130-460。代表作：開源的智研法律 AI 系統（47,001 條法規、三 AI 互相校對，GitHub: Lucien-1127/zhiyan-legal）。\n' +
+  '若訪客的問題需要報價或詳細評估，引導他寄信或加 LINE 直接聊。不要編造不知道的資訊。';
+
 function zxToggle(){
-  zxOpen = !zxOpen;
-  document.getElementById('zx-panel').classList.toggle('open', zxOpen);
+  zxIsOpen = !zxIsOpen;
+  document.getElementById('zx-panel').classList.toggle('open', zxIsOpen);
+  if(zxIsOpen) document.getElementById('zxTa').focus();
+}
+function zxOpen(){
+  if(!zxIsOpen) zxToggle();
+  else document.getElementById('zxTa').focus();
+}
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && zxIsOpen) zxToggle(); });
+
+function zxAddMsg(role, text){
+  const bd = document.getElementById('zxBd');
+  const row = document.createElement('div');
+  row.className = 'zx-msg' + (role === 'user' ? ' user' : '');
+  const av = document.createElement('div');
+  av.className = 'zx-av';
+  av.textContent = role === 'user' ? '🙂' : '🤖';
+  const bb = document.createElement('div');
+  bb.className = 'zx-bb';
+  bb.textContent = text;
+  row.appendChild(av); row.appendChild(bb);
+  bd.appendChild(row);
+  bd.scrollTop = bd.scrollHeight;
+}
+
+function zxAsk(q){
+  const ta = document.getElementById('zxTa');
+  ta.value = q;
+  zxSend();
+}
+
+function zxSend(){
+  const ta = document.getElementById('zxTa');
+  const text = ta.value.trim();
+  if(!text || zxSending) return;
+  ta.value = '';
+  const chips = document.getElementById('zxChips');
+  if(chips) chips.remove();
+  zxAddMsg('user', text);
+  zxHistory.push({ role: 'user', content: text });
+
+  const bd = document.getElementById('zxBd');
+  const typing = document.createElement('div');
+  typing.className = 'zx-msg';
+  typing.innerHTML = '<div class="zx-av">🤖</div><div class="zx-typing"><span></span><span></span><span></span></div>';
+  bd.appendChild(typing);
+  bd.scrollTop = bd.scrollHeight;
+  zxSending = true;
+  document.getElementById('zxGo').disabled = true;
+
+  fetch('/api/ai/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'auto',
+      max_tokens: 500,
+      messages: [{ role: 'system', content: ZX_SYSTEM }, ...zxHistory.slice(-10)],
+    }),
+  })
+  .then(r => { if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+  .then(d => {
+    const reply = d?.choices?.[0]?.message?.content;
+    if(!reply) throw new Error('empty');
+    zxHistory.push({ role: 'assistant', content: reply });
+    if(zxHistory.length > 14) zxHistory.splice(0, zxHistory.length - 12);
+    typing.remove();
+    zxAddMsg('ai', reply);
+  })
+  .catch(() => {
+    typing.remove();
+    zxAddMsg('ai', '現在連線不太穩 🙏 你可以直接寄信到 Lucien127@proton.me，或加 LINE：vbn920，本人回覆更快！');
+  })
+  .finally(() => {
+    zxSending = false;
+    document.getElementById('zxGo').disabled = false;
+  });
 }
 // GitHub stars
 fetch('https://api.github.com/repos/Lucien-1127/zhiyan-legal')
