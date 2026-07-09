@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="智研顧問">
+<meta name="description" content="聯絡謝 Lucien · 智研 — 系統整合顧問。聊聊你的專案需求。">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="manifest" href="/manifest.json">
+<title>聯絡我 — 謝 Lucien · 智研</title>
+
+<style>
+:root {
+  --navy:       #1a2332;
+  --navy-light: #243044;
+  --gold:       #c9a84c;
+  --gold-hover: #d4b85a;
+  --gold-10:    rgba(201,168,76,.10);
+  --gold-15:    rgba(201,168,76,.15);
+  --bg:         #f5f6fa;
+  --white:      #ffffff;
+  --border:     #e5e7eb;
+  --t1:         #1a2332;
+  --t2:         #6b7280;
+  --t3:         #9ca3af;
+
+  --r-sm:   8px;
+  --r-md:   12px;
+  --r-lg:   16px;
+  --r-pill: 999px;
+
+  --sh-sm: 0 2px 8px rgba(0,0,0,.06);
+  --sh-md: 0 4px 20px rgba(0,0,0,.10);
+  --sh-lg: 0 8px 40px rgba(0,0,0,.12);
+
+  --font: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+  --mono: "SF Mono", "Fira Code", monospace;
+
+  --nav-h: 76px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--white);
+  color: var(--t1);
+  overflow-x: hidden;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  touch-action: pan-y;
+}
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+button { border: none; background: none; cursor: pointer; font-family: inherit; }
+
+.reveal {
+  opacity: 1;
+  transform: none;
+  transition: opacity .55s cubic-bezier(.4,0,.2,1), transform .55s cubic-bezier(.4,0,.2,1);
+}
+.reveal.animate {
+  opacity: 0;
+  transform: translateY(28px);
+}
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-delay-1 { transition-delay: .10s; }
+.reveal-delay-2 { transition-delay: .20s; }
+.reveal-delay-3 { transition-delay: .30s; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* NAV */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6vw;
+  height: var(--nav-h);
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.nav-logo {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.nav-logo .name { color: var(--navy); font-weight: 700; font-size: 20px; }
+.nav-logo .dot  { color: var(--gold); font-size: 20px; }
+.nav-logo .brand{ color: var(--t2); font-weight: 700; font-size: 20px; }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  font-size: 14px;
+  color: var(--t2);
+}
+.nav-links a {
+  position: relative;
+  padding: 4px 0;
+  transition: color .2s;
+}
+.nav-links a:not(.cta)::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--gold);
+  transition: width .25s;
+  border-radius: 1px;
+}
+.nav-links a:not(.cta):hover { color: var(--navy); }
+.nav-links a:not(.cta):hover::after { width: 100%; }
+.nav-links .cta {
+  background: var(--gold);
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: var(--r-pill);
+  font-weight: 700;
+  transition: background .2s, transform .15s;
+}
+.nav-links .cta:hover { background: var(--gold-hover); transform: translateY(-1px); }
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px; height: 40px;
+  cursor: pointer;
+  z-index: 60;
+  position: relative;
+}
+.hamburger span {
+  display: block;
+  width: 22px; height: 2.5px;
+  background: var(--t2);
+  border-radius: 3px;
+  transition: all .3s cubic-bezier(.4,0,.2,1);
+  position: absolute;
+}
+.hamburger span:nth-child(1) { transform: translateY(-7px); }
+.hamburger span:nth-child(3) { transform: translateY(7px); }
+.hamburger.open span:nth-child(1) { transform: rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg); }
+.nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.3);
+  z-index: 40;
+  backdrop-filter: blur(2px);
+}
+.nav-overlay.open { display: block; }
+
+/* PAGE HEADER */
+.page-header {
+  background: var(--bg);
+  padding: 80px 6vw 64px;
+  text-align: center;
+}
+.page-header-eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: .5px;
+  margin-bottom: 16px;
+}
+.page-header-title {
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.35;
+  margin-bottom: 16px;
+}
+.page-header-sub {
+  font-size: 16px;
+  color: var(--t2);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* CONTACT SECTION */
+.contact-section {
+  padding: 72px 6vw;
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 56px;
+  align-items: start;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.contact-direct-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+.contact-items {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+  font-size: 14px;
+  transition: background .2s, border-color .2s;
+  border: 1px solid transparent;
+}
+.contact-item:hover {
+  background: var(--gold-10);
+  border-color: var(--gold-15);
+}
+.ci-icon { font-size: 18px; flex-shrink: 0; }
+.contact-tips {
+  margin-top: 32px;
+}
+.contact-tips-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.contact-tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 13.5px;
+  color: var(--t2);
+  line-height: 1.7;
+}
+
+/* FORM CARD */
+.form-card {
+  background: var(--bg);
+  border-radius: var(--r-lg);
+  padding: 32px;
+}
+.form-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.form-card-sub {
+  font-size: 13.5px;
+  color: var(--t2);
+  margin-bottom: 20px;
+  line-height: 1.7;
+}
+.form-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 16px;
+  font-size: 14px;
+  color: var(--t1);
+  outline: none;
+  resize: vertical;
+  margin-bottom: 16px;
+  font-family: inherit;
+  background: var(--white);
+  transition: border-color .2s;
+}
+.form-textarea:focus { border-color: var(--gold); }
+.form-analyze-btn {
+  background: var(--gold);
+  color: #fff;
+  padding: 13px 26px;
+  border-radius: var(--r-pill);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background .2s, transform .15s;
+}
+.form-analyze-btn:hover { background: var(--gold-hover); transform: translateY(-1px); }
+.form-analyze-btn:disabled { opacity: .5; cursor: not-allowed; }
+.form-error {
+  font-size: 13px;
+  color: #ef4444;
+  margin-top: 8px;
+}
+.form-summary {
+  margin-top: 20px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 20px;
+}
+.form-summary-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.form-summary-title span:first-child { font-size: 16px; }
+.form-summary-title span:last-child {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+}
+.form-summary-body {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--t1);
+  white-space: pre-wrap;
+}
+.form-mailto-link {
+  display: inline-block;
+  margin-top: 18px;
+  background: var(--navy);
+  color: #fff;
+  padding: 12px 22px;
+  border-radius: var(--r-sm);
+  font-size: 13.5px;
+  font-weight: 700;
+  transition: background .2s;
+}
+.form-mailto-link:hover { background: var(--navy-light); }
+.form-hint {
+  font-size: 11px;
+  color: var(--t3);
+  margin-top: 16px;
+}
+
+/* FAB */
+#fab {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 9999;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #fff;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(201,168,76,.4);
+  transition: transform .2s, opacity .2s;
+  user-select: none;
+}
+#fab:active { transform: scale(1.08); }
+#fab.hidden { display: none; }
+#chat-panel {
+  position: fixed;
+  bottom: 92px;
+  right: 20px;
+  z-index: 9998;
+  width: 360px;
+  max-height: 520px;
+  height: 60vh;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.18);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 14px;
+}
+#chat-panel.open { display: flex; }
+#chat-header {
+  background: linear-gradient(135deg, var(--navy), #3a4d6a);
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+#chat-close { cursor: pointer; font-size: 18px; opacity: .8; transition: opacity .15s; }
+#chat-close:hover { opacity: 1; }
+#chat-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--white);
+  flex-shrink: 0;
+}
+.chat-tab {
+  flex: 1;
+  padding: 10px 8px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--t3);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color .2s, border-color .2s;
+  white-space: nowrap;
+}
+.chat-tab.active { color: var(--navy); border-bottom-color: var(--gold); }
+.chat-tab:hover { color: var(--navy); }
+.chat-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #fafafa;
+}
+.chat-panel-body::-webkit-scrollbar { width: 4px; }
+.chat-panel-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.chat-msg {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  animation: fadeUp .25s ease;
+}
+.chat-msg.user { align-self: flex-end; background: var(--navy); color: #fff; border-bottom-right-radius: 4px; }
+.chat-msg.ai   { align-self: flex-start; background: #f0f0f0; color: #333; border-bottom-left-radius: 4px; }
+.chat-typing { align-self: flex-start; background: #f0f0f0; padding: 10px 16px; border-radius: 14px; border-bottom-left-radius: 4px; display: flex; gap: 4px; align-items: center; }
+.chat-typing span { width: 6px; height: 6px; border-radius: 50%; background: #999; animation: typingDot 1.2s infinite; }
+.chat-typing span:nth-child(2) { animation-delay: .2s; }
+.chat-typing span:nth-child(3) { animation-delay: .4s; }
+@keyframes fadeUp { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: none; } }
+@keyframes typingDot { 0%,60%,100% { opacity:.3; transform:scale(1); } 30% { opacity:1; transform:scale(1.2); } }
+#chat-input-area {
+  display: flex;
+  padding: 12px;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+  background: var(--white);
+  flex-shrink: 0;
+}
+#chat-input {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .2s;
+}
+#chat-input:focus { border-color: var(--gold); }
+#chat-send {
+  background: var(--gold);
+  color: #fff;
+  border-radius: 24px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .2s;
+}
+#chat-send:hover { background: var(--gold-hover); }
+#chat-send:active { opacity: .85; }
+
+/* FOOTER */
+.footer {
+  background: var(--navy);
+  padding: 32px 6vw;
+  text-align: center;
+  font-size: 12.5px;
+  color: rgba(200,208,220,.6);
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .contact-section { grid-template-columns: 1fr; gap: 40px; }
+}
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+  .nav-links {
+    position: fixed !important;
+    top: 0; right: 0;
+    width: 280px; height: 100vh;
+    background: var(--white);
+    padding: 96px 32px 40px;
+    flex-direction: column !important;
+    gap: 8px !important;
+    z-index: 55;
+    transform: translateX(100%);
+    transition: transform .35s cubic-bezier(.4,0,.2,1);
+    box-shadow: -4px 0 32px rgba(0,0,0,.12);
+    overflow-y: auto;
+    align-items: stretch !important;
+  }
+  .nav-links.open { transform: translateX(0); }
+  .nav-links a:not(.cta) {
+    padding: 14px 16px !important;
+    font-size: 15px !important;
+    border-radius: 12px !important;
+    min-height: 48px;
+    display: flex !important;
+    align-items: center !important;
+  }
+  .nav-links a:not(.cta)::after { display: none; }
+  .nav-links a:not(.cta):hover { background: var(--bg); color: var(--navy); }
+  .nav-links .cta { margin-top: 12px; text-align: center; justify-content: center; }
+  .page-header { padding: 56px 5vw 48px; }
+  .page-header-title { font-size: 28px; }
+  .contact-section { padding: 40px 5vw; }
+  .form-card { padding: 24px; }
+  #chat-panel { width: calc(100vw - 32px); right: 16px; bottom: 88px; height: 60vh; }
+}
+@media (max-width: 480px) {
+  .page-header-title { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav">
+  <a href="/home.dc.html" class="nav-logo">
+    <span class="name">謝 Lucien</span>
+    <span class="dot">·</span>
+    <span class="brand">智研</span>
+  </a>
+  <button class="hamburger" aria-label="選單" id="hamburger">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-overlay" id="navOverlay"></div>
+  <div class="nav-links" id="navLinks">
+    <a href="/home.dc.html#services" class="nav-close">服務</a>
+    <a href="/portfolio.dc.html" class="nav-close">作品</a>
+    <a href="/home.dc.html#about" class="nav-close">關於我</a>
+    <a href="/home.dc.html#faq" class="nav-close">常見問答</a>
+    <a href="/contact.dc.html" class="cta nav-close">聊聊你的需求</a>
+  </div>
+</nav>
+
+<!-- ═══ PAGE HEADER ═══ -->
+<section class="page-header reveal">
+  <div class="page-header-eyebrow">聯絡我</div>
+  <h1 class="page-header-title">來聊聊你的專案吧。</h1>
+  <p class="page-header-sub">先描述一下你想做什麼，我會盡快回你；如果想先整理一下想法，右邊有個小工具可以幫忙。</p>
+</section>
+
+<!-- ═══ CONTACT ═══ -->
+<section class="contact-section">
+  <!-- Left: Direct Contact -->
+  <div>
+    <div class="reveal">
+      <div class="contact-direct-title">直接聯絡</div>
+      <div class="contact-items">
+        <a href="mailto:Lucien127@proton.me" class="contact-item">
+          <span class="ci-icon">📧</span> Lucien127@proton.me
+        </a>
+        <a href="https://github.com/Lucien-1127" class="contact-item" target="_blank">
+          <span class="ci-icon">🔗</span> github.com/Lucien-1127
+        </a>
+        <a href="tel:0966130460" class="contact-item">
+          <span class="ci-icon">📞</span> 0966-130-460
+        </a>
+        <a href="https://line.me/R/ti/p/~vbn920" class="contact-item" target="_blank">
+          <span class="ci-icon">💬</span> LINE 聯繫
+        </a>
+        <div class="contact-item">
+          <span class="ci-icon">📍</span> 台灣桃園
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-tips reveal reveal-delay-1">
+      <div class="contact-tips-title">接案小提醒</div>
+      <div class="contact-tips-list">
+        <div>💰 先免費聊需求，再依複雜度報價。</div>
+        <div>⏱️ 簡單串接約 1–2 週，複雜系統另議。</div>
+        <div>🔒 需要的話可以簽保密協議。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Form -->
+  <div class="form-card reveal">
+    <div class="form-card-title">📋 幫你整理需求</div>
+    <p class="form-card-sub">把你想做的事情用自己的話寫下來，我會幫你整理成簡短摘要，方便我快速了解、也方便你檢查有沒有漏掉什麼。</p>
+    <textarea class="form-textarea" id="needTextarea" placeholder="例如：我想幫我的線上課程網站加一個可以回答學員常見問題的功能，還要能記住之前的對話..." rows="6"></textarea>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px;">
+      <button class="form-analyze-btn" id="analyzeBtn" onclick="analyzeNeed()">幫你整理需求</button>
+      <span class="form-error" id="formError" style="display:none;"></span>
+    </div>
+
+    <div class="form-summary" id="formSummary" style="display:none;">
+      <div class="form-summary-title">
+        <span>⚖️</span>
+        <span>需求摘要</span>
+      </div>
+      <div class="form-summary-body" id="summaryBody"></div>
+      <a class="form-mailto-link" id="mailtoLink" href="#">用這份摘要寄信給我 →</a>
+    </div>
+
+    <p class="form-hint">這個小工具只會整理摘要，不會自動送出，你可以檢查後再決定要不要寄出。</p>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <p>謝 Lucien · 智研 © 2026 · 個人作品網站，合作細節歡迎直接討論。</p>
+</footer>
+
+<!-- ═══ FAB ═══ -->
+<div id="fab" onclick="toggleChat()" aria-label="開啟客服" title="智小研 AI 客服">🤖</div>
+<div id="chat-panel">
+  <div id="chat-header">
+    <span id="chat-title">🤖 智小研 · AI 客服</span>
+    <span id="chat-close" onclick="toggleChat()">✕</span>
+  </div>
+  <div id="chat-tabs">
+    <button class="chat-tab active" id="tab-cs" onclick="switchTab('cs')">💬 客服</button>
+    <button class="chat-tab" id="tab-legal" onclick="switchTab('legal')">⚖️ 法律諮詢</button>
+  </div>
+  <div class="chat-panel-body" id="panel-cs">
+    <div class="chat-msg ai">嗨！我是智小研 👋 有什麼想了解的嗎？</div>
+  </div>
+  <div class="chat-panel-body" id="panel-legal" style="display:none">
+    <div class="chat-msg ai">您好！我是智小研法律助手 ⚖️ 請問有什麼法律問題需要協助？</div>
+  </div>
+  <div id="chat-input-area">
+    <input type="text" id="chat-input" placeholder="輸入你的問題..." onkeydown="if(event.key==='Enter')sendMsg()">
+    <button id="chat-send" onclick="sendMsg()">送出</button>
+  </div>
+</div>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script>
+/* ─── Hamburger ─── */
+const ham = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+const navOverlay = document.getElementById('navOverlay');
+function closeNav() {
+  ham.classList.remove('open');
+  navLinks.classList.remove('open');
+  navOverlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+ham.addEventListener('click', () => {
+  const open = !navLinks.classList.contains('open');
+  if (open) {
+    ham.classList.add('open');
+    navLinks.classList.add('open');
+    navOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  } else { closeNav(); }
+});
+navOverlay.addEventListener('click', closeNav);
+document.querySelectorAll('.nav-close').forEach(a => a.addEventListener('click', closeNav));
+
+/* ─── Scroll Reveal ─── */
+// Add .animate class to all reveals so they start hidden for animation
+document.querySelectorAll('.reveal').forEach(el => el.classList.add('animate'));
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { 
+    if (e.isIntersecting) { 
+      e.target.classList.remove('animate'); 
+      e.target.classList.add('visible'); 
+      revealObserver.unobserve(e.target); 
+    } 
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+/* ─── Need Analyzer ─── */
+const needSystemPrompt = [
+  '你是 Lucien 接案網站聯絡頁上的需求整理小助手。Lucien 是台灣桃園的系統整合顧問，開源了智研法律系統，服務範圍涵蓋法律文件處理、流程自動化、系統開發、內容生產。',
+  '任務：讀訪客用自己的話描述的需求，整理成給 Lucien 看的簡短摘要，方便他快速了解案子。',
+  '請用繁體中文（台灣），以下列格式輸出，不要加多餘的開場白或客套話：',
+  '專案類型：一句話描述',
+  '建議服務項目：對應到上面服務項目中最相關的 1-2 項',
+  '需求重點：條列 2-4 點關鍵需求',
+  '待確認事項：條列 1-2 點你覺得需要跟訪客進一步釐清的問題',
+  '整體語氣保持中性、專業、精簡，不要幫忙報價或承諾交付時間。',
+].join('\n');
+
+function analyzeNeed() {
+  const textarea = document.getElementById('needTextarea');
+  const text = textarea.value.trim();
+  if (!text) return;
+
+  const btn = document.getElementById('analyzeBtn');
+  const errorEl = document.getElementById('formError');
+  const summaryEl = document.getElementById('formSummary');
+  const summaryBody = document.getElementById('summaryBody');
+  const mailtoLink = document.getElementById('mailtoLink');
+
+  btn.disabled = true;
+  btn.textContent = '整理中...';
+  errorEl.style.display = 'none';
+  summaryEl.style.display = 'none';
+
+  fetch('/api/ai/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'auto',
+      messages: [{ role: 'system', content: needSystemPrompt }, { role: 'user', content: text }],
+    }),
+  })
+  .then(r => r.json())
+  .then(d => {
+    const summary = d?.choices?.[0]?.message?.content || '分析失敗，請直接寄信給我：Lucien127@proton.me';
+    summaryBody.textContent = summary;
+
+    const subject = encodeURIComponent('接案需求諮詢');
+    const bodyText = '我的需求：\n' + text + '\n\nAI 整理摘要：\n' + summary;
+    mailtoLink.href = 'mailto:Lucien127@proton.me?subject=' + subject + '&body=' + encodeURIComponent(bodyText);
+
+    summaryEl.style.display = 'block';
+  })
+  .catch(err => {
+    errorEl.textContent = '分析失敗了，你可以直接把需求寄給我：Lucien127@proton.me';
+    errorEl.style.display = 'block';
+  })
+  .finally(() => {
+    btn.disabled = false;
+    btn.textContent = '幫你整理需求';
+  });
+}
+
+/* ─── FAB Chat ─── */
+let chatOpen = false;
+let currentTab = 'cs';
+const csSystemPrompt = [
+  '你是謝 Lucien 個人品牌接案網站上的「智小研」，用親切、口語但專業的繁體中文（台灣）回覆訪客問題，語氣像在聊天。',
+  '',
+  '你的核心任務：介紹服務、引導需求、建立信任。讓訪客願意聯絡謝 Lucien。',
+  '',
+  '回覆控制在 2–4 句以內。不確定的說不確定，不要瞎掰。',
+  '',
+  '先了解訪客想做什麼，再推薦對應的服務項目。',
+  '',
+  '如果訪客有明確需求，引導他們寄信到 Lucien127@proton.me 或到 contact 頁面填寫。',
+  '',
+  '謝 Lucien：台灣桃園系統整合顧問，開源智研法律系統（47,001 筆法條，benchmark 91–95 分）。',
+  '',
+  '服務：法律 AI、流程自動化、系統整合、AI 提示詞工程、影音自動化。',
+  '',
+  '接案：免費了解需求再報價，可簽 NDA，不簽長約。',
+  '',
+  '聯絡：Lucien127@proton.me。如訪客問不相關的事，友善引回本業。',
+].join('\n');
+let csHistory = [{ role: 'system', content: csSystemPrompt }];
+let legalHistory = [{ role: 'system', content: '你是智研法律系統助手「智小研」，回答台灣法律問題。',
+  '',
+  '你有完整的台灣法條資料庫（47,001 筆法條），包括民法、刑法、商法、行政法等。',
+  '',
+  '回答規範：',
+  '1. 引用具體法條（例：民法第 767 條、刑法第 309 條）',
+  '2. 用白話文解釋，讓一般人也能理解',
+  '3. 不確定的部分明確告知，不要瞎猜',
+  '4. 重大法律問題建議諮詢專業律師',
+  '5. 回覆控制在 3–5 句以內，精簡有力',
+  '6. 如涉及多個法條，條列清楚',
+  '7. 合約相關問題可提醒風險點',
+  '8. 不給訴訟策略建議，只給法律知識參考',
+  '',
+  '重要：引用的法條和判決必須真實存在。如果無法驗證，明確告知「此部分無法確認」。',
+  '',
+  '使用繁體中文（台灣）。' }];
+
+function toggleChat() {
+  const panel = document.getElementById('chat-panel');
+  const fab = document.getElementById('fab');
+  chatOpen = !chatOpen;
+  panel.classList.toggle('open', chatOpen);
+  fab.classList.toggle('hidden', chatOpen);
+  if (chatOpen) setTimeout(() => document.getElementById('chat-input').focus(), 300);
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tab-cs').classList.toggle('active', tab === 'cs');
+  document.getElementById('tab-legal').classList.toggle('active', tab === 'legal');
+  document.getElementById('panel-cs').style.display = tab === 'cs' ? 'flex' : 'none';
+  document.getElementById('panel-legal').style.display = tab === 'legal' ? 'flex' : 'none';
+  document.getElementById('chat-title').textContent = tab === 'legal' ? '⚖️ 智小研 · 法律諮詢' : '🤖 智小研 · AI 客服';
+  document.getElementById('chat-input').placeholder = tab === 'legal' ? '輸入法律問題...' : '輸入你的問題...';
+}
+
+function addChatMsg(panelId, role, text) {
+  const panel = document.getElementById(panelId);
+  const d = document.createElement('div');
+  d.className = 'chat-msg ' + role;
+  d.textContent = text;
+  panel.appendChild(d);
+  panel.scrollTop = panel.scrollHeight;
+  return d;
+}
+
+function sendMsg() {
+  const inp = document.getElementById('chat-input');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+  const panelId = currentTab === 'legal' ? 'panel-legal' : 'panel-cs';
+  const history = currentTab === 'legal' ? legalHistory : csHistory;
+  addChatMsg(panelId, 'user', text);
+  history.push({ role: 'user', content: text });
+
+  const panel = document.getElementById(panelId);
+  const typing = document.createElement('div');
+  typing.className = 'chat-typing';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  panel.appendChild(typing);
+  panel.scrollTop = panel.scrollHeight;
+
+  const endpoint = currentTab === 'legal' ? '/api/legal/api/chat/ask' : '/api/ai/chat/completions';
+  const body = currentTab === 'legal'
+    ? JSON.stringify({ message: text, temperature: 0.3, max_tokens: 1000 })
+    : JSON.stringify({ model: 'auto', messages: history.slice(-11) });
+
+  fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body,
+  })
+  .then(r => r.json())
+  .then(d => {
+    typing.remove();
+    const reply = currentTab === 'legal'
+      ? (d.content || '抱歉，目前法律諮詢服務暫時無法使用。')
+      : (d?.choices?.[0]?.message?.content || '抱歉，目前無法連線，可直接寄信到 Lucien127@proton.me');
+    history.push({ role: 'assistant', content: reply });
+    if (history.length > 15) history.splice(1, history.length - 12);
+    addChatMsg(panelId, 'ai', reply);
+  })
+  .catch(() => {
+    typing.remove();
+    addChatMsg(panelId, 'ai', '連線不穩，可直接寄信到 Lucien127@proton.me 喔 ～');
+  });
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
+}
+</script>
+</body>
+</html>

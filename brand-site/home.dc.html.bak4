@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="智研顧問">
+<meta name="description" content="謝 Lucien · 智研 — 台灣桃園系統整合顧問。把你腦袋裡的想法，變成跑得動、用得順的系統。">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="manifest" href="/manifest.json">
+<title>謝 Lucien · 智研 — 系統整合顧問</title>
+
+<style>
+/* ════════════════════════════════════════════════
+   TOKEN SYSTEM
+   ════════════════════════════════════════════════ */
+:root {
+  --navy:       #1a2332;
+  --navy-light: #243044;
+  --gold:       #c9a84c;
+  --gold-hover: #d4b85a;
+  --gold-10:    rgba(201,168,76,.10);
+  --gold-15:    rgba(201,168,76,.15);
+  --bg:         #f5f6fa;
+  --white:      #ffffff;
+  --border:     #e5e7eb;
+  --t1:         #1a2332;
+  --t2:         #6b7280;
+  --t3:         #9ca3af;
+
+  --r-sm:   8px;
+  --r-md:   12px;
+  --r-lg:   16px;
+  --r-pill: 999px;
+
+  --sh-sm: 0 2px 8px rgba(0,0,0,.06);
+  --sh-md: 0 4px 20px rgba(0,0,0,.10);
+  --sh-lg: 0 8px 40px rgba(0,0,0,.12);
+
+  --font: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+  --mono: "SF Mono", "Fira Code", monospace;
+
+  --nav-h: 76px;
+}
+
+/* ════════════════════════════════════════════════
+   RESET & BASE
+   ════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--white);
+  color: var(--t1);
+  overflow-x: hidden;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  touch-action: pan-y;
+}
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+button { border: none; background: none; cursor: pointer; font-family: inherit; }
+
+/* ════════════════════════════════════════════════
+   SCROLL REVEAL
+   ════════════════════════════════════════════════ */
+.reveal {
+  opacity: 1;
+  transform: none;
+  transition: opacity .55s cubic-bezier(.4,0,.2,1), transform .55s cubic-bezier(.4,0,.2,1);
+}
+.reveal.animate {
+  opacity: 0;
+  transform: translateY(28px);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+.reveal-delay-1 { transition-delay: .10s; }
+.reveal-delay-2 { transition-delay: .20s; }
+.reveal-delay-3 { transition-delay: .30s; }
+.reveal-delay-4 { transition-delay: .40s; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ════════════════════════════════════════════════
+   NAV
+   ════════════════════════════════════════════════ */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6vw;
+  height: var(--nav-h);
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.nav-logo {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.nav-logo .name { color: var(--navy); font-weight: 700; font-size: 20px; }
+.nav-logo .dot  { color: var(--gold); font-size: 20px; }
+.nav-logo .brand{ color: var(--t2); font-weight: 700; font-size: 20px; }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  font-size: 14px;
+  color: var(--t2);
+}
+.nav-links a {
+  position: relative;
+  padding: 4px 0;
+  transition: color .2s;
+}
+.nav-links a:not(.cta)::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--gold);
+  transition: width .25s;
+  border-radius: 1px;
+}
+.nav-links a:not(.cta):hover { color: var(--navy); }
+.nav-links a:not(.cta):hover::after { width: 100%; }
+.nav-links .cta {
+  background: var(--gold);
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: var(--r-pill);
+  font-weight: 700;
+  transition: background .2s, transform .15s;
+}
+.nav-links .cta:hover { background: var(--gold-hover); transform: translateY(-1px); }
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px; height: 40px;
+  cursor: pointer;
+  z-index: 60;
+  position: relative;
+}
+.hamburger span {
+  display: block;
+  width: 22px; height: 2.5px;
+  background: var(--t2);
+  border-radius: 3px;
+  transition: all .3s cubic-bezier(.4,0,.2,1);
+  position: absolute;
+}
+.hamburger span:nth-child(1) { transform: translateY(-7px); }
+.hamburger span:nth-child(3) { transform: translateY(7px); }
+.hamburger.open span:nth-child(1) { transform: rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg); }
+
+.nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.3);
+  z-index: 40;
+  backdrop-filter: blur(2px);
+}
+.nav-overlay.open { display: block; }
+
+/* ════════════════════════════════════════════════
+   HERO
+   ════════════════════════════════════════════════ */
+.hero {
+  position: relative;
+  background: var(--bg);
+  padding: 96px 6vw;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -120px; right: -160px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(201,168,76,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: -100px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(26,35,50,.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 440px;
+  gap: 56px;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold);
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  letter-spacing: .5px;
+}
+.hero-eyebrow .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .5; transform: scale(.8); }
+}
+.hero-title {
+  font-size: 46px;
+  line-height: 1.3;
+  font-weight: 800;
+  color: var(--t1);
+  margin-bottom: 24px;
+  letter-spacing: -.5px;
+}
+.hero-title em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--gold) 0%, #e8c56a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-body {
+  font-size: 16.5px;
+  line-height: 1.8;
+  color: var(--t2);
+  margin-bottom: 36px;
+  max-width: 480px;
+}
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gold);
+  color: #fff;
+  padding: 16px 30px;
+  border-radius: var(--r-pill);
+  font-weight: 700;
+  font-size: 15px;
+  transition: background .2s, transform .15s, box-shadow .2s;
+  box-shadow: 0 4px 16px rgba(201,168,76,.35);
+}
+.btn-primary:hover {
+  background: var(--gold-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(201,168,76,.45);
+}
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--navy);
+  font-size: 14px;
+  font-weight: 700;
+  transition: color .2s;
+}
+.btn-ghost:hover { color: var(--gold); }
+.btn-ghost .arrow { transition: transform .2s; }
+.btn-ghost:hover .arrow { transform: translateX(4px); }
+.hero-meta {
+  font-size: 13px;
+  color: var(--t3);
+}
+
+/* Hero Chat Widget */
+.hero-widget {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.widget-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--white);
+}
+.widget-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: pulse 2s infinite;
+}
+.widget-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--t2);
+  flex: 1;
+}
+.widget-badge {
+  font-size: 11px;
+  color: var(--t3);
+  background: var(--bg);
+  padding: 3px 10px;
+  border-radius: var(--r-pill);
+}
+.widget-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  max-height: 280px;
+  overflow-y: auto;
+  background: var(--bg);
+}
+.widget-messages::-webkit-scrollbar { width: 4px; }
+.widget-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.bubble {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: var(--r-lg);
+  font-size: 13.5px;
+  line-height: 1.6;
+  word-break: break-word;
+}
+.bubble.user {
+  align-self: flex-end;
+  background: var(--navy);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.bubble.ai {
+  align-self: flex-start;
+  background: var(--white);
+  color: var(--t1);
+  border-bottom-left-radius: 4px;
+  box-shadow: var(--sh-sm);
+}
+.bubble.typing span {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--t3);
+  animation: typingDot 1.2s infinite;
+}
+.bubble.typing span:nth-child(2) { animation-delay: .2s; }
+.bubble.typing span:nth-child(3) { animation-delay: .4s; }
+@keyframes typingDot {
+  0%, 60%, 100% { opacity: .3; transform: scale(1); }
+  30% { opacity: 1; transform: scale(1.2); }
+}
+.widget-input-row {
+  display: flex;
+  gap: 10px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+  background: var(--white);
+}
+.widget-input {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 10px 16px;
+  font-size: 13.5px;
+  font-family: inherit;
+  color: var(--t1);
+  outline: none;
+  transition: border-color .2s;
+  background: var(--bg);
+}
+.widget-input:focus { border-color: var(--gold); background: var(--white); }
+.widget-send {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .2s, transform .15s;
+  font-size: 14px;
+}
+.widget-send:hover { background: var(--gold-hover); transform: scale(1.08); }
+.widget-hint {
+  font-size: 11px;
+  color: var(--t3);
+  padding: 0 18px 12px;
+  background: var(--white);
+}
+
+/* ════════════════════════════════════════════════
+   ABOUT
+   ════════════════════════════════════════════════ */
+.about {
+  background: var(--white);
+  padding: 88px 6vw;
+}
+.about-inner {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.about-card {
+  background: var(--bg);
+  border-radius: 20px;
+  padding: 48px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 40px;
+  align-items: start;
+}
+.about-avatar-col { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.about-avatar {
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--navy) 0%, #3a4d6a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-size: 36px;
+  font-weight: 800;
+  box-shadow: 0 8px 32px rgba(26,35,50,.25);
+  flex-shrink: 0;
+}
+.about-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+.badge {
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: var(--r-pill);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.badge-gold { background: var(--gold-10); color: var(--gold); }
+.badge-navy { background: rgba(26,35,50,.08); color: var(--navy); }
+.about-content {}
+.about-label {
+  font-size: 13px;
+  color: var(--gold);
+  font-weight: 700;
+  letter-spacing: .5px;
+  margin-bottom: 10px;
+}
+.about-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.about-body {
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--t2);
+  margin-bottom: 20px;
+}
+.about-body strong { color: var(--t1); }
+.about-links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.about-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+  transition: color .2s;
+}
+.about-link:hover { color: var(--gold-hover); }
+
+/* ════════════════════════════════════════════════
+   SERVICES
+   ════════════════════════════════════════════════ */
+.services {
+  background: var(--bg);
+  padding: 88px 6vw;
+}
+.section-header { text-align: center; margin-bottom: 48px; }
+.section-eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.section-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--t1);
+  margin-bottom: 12px;
+}
+.section-sub {
+  font-size: 15.5px;
+  color: var(--t2);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.service-card {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  padding: 28px;
+  border: 1px solid transparent;
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+  cursor: default;
+}
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sh-md);
+  border-color: var(--gold-15);
+}
+.service-icon {
+  width: 52px; height: 52px;
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+.icon-gold  { background: var(--gold-10); }
+.icon-navy  { background: rgba(26,35,50,.06); }
+.icon-green { background: rgba(34,197,94,.08); }
+.icon-blue  { background: rgba(37,99,235,.08); }
+.icon-purple{ background: rgba(139,92,246,.08); }
+.service-name {
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+.service-desc {
+  font-size: 13.5px;
+  color: var(--t2);
+  line-height: 1.7;
+}
+
+/* ════════════════════════════════════════════════
+   COMMITTEE
+   ════════════════════════════════════════════════ */
+.committee {
+  background: var(--navy);
+  padding: 96px 6vw;
+  position: relative;
+  overflow: hidden;
+}
+.committee::before {
+  content: '';
+  position: absolute;
+  top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(201,168,76,.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+.committee .section-eyebrow { color: var(--gold); }
+.committee .section-title { color: #fff; }
+.committee .section-sub { color: rgba(200,208,220,.85); }
+
+.committee-flow {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Flow row */
+.flow-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.flow-arrow {
+  color: var(--gold);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.flow-model {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: var(--r-md);
+  padding: 14px 20px;
+  text-align: center;
+  min-width: 110px;
+  transition: background .2s, border-color .2s;
+}
+.flow-model:hover {
+  background: rgba(255,255,255,.09);
+  border-color: rgba(201,168,76,.3);
+}
+.flow-model-name { color: #fff; font-weight: 700; font-size: 14px; }
+.flow-model-sub  { color: rgba(200,208,220,.6); font-size: 11.5px; margin-top: 4px; }
+.flow-engine {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(201,168,76,.2);
+  border-radius: var(--r-md);
+  padding: 16px 24px;
+  text-align: center;
+}
+.flow-engine-name { color: var(--gold); font-weight: 700; font-size: 14px; }
+.flow-engine-sub  { color: rgba(200,208,220,.65); font-size: 11.5px; margin-top: 4px; }
+
+.flow-outputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.flow-output {
+  border-radius: var(--r-sm);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.out-ok      { background: rgba(34,197,94,.12);  color: #4ade80; }
+.out-warn    { background: rgba(234,88,12,.12);   color: #fb923c; }
+.out-err     { background: rgba(239,68,68,.12);   color: #f87171; }
+
+.committee-principles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+  max-width: 900px;
+  margin: 40px auto 0;
+}
+.principle {
+  background: rgba(255,255,255,.05);
+  border-radius: var(--r-md);
+  padding: 18px 20px;
+  border: 1px solid rgba(255,255,255,.07);
+}
+.principle-title { color: var(--gold); font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+.principle-body  { color: rgba(200,208,220,.7); font-size: 12.5px; line-height: 1.6; }
+
+.code-preview {
+  max-width: 520px;
+  margin: 36px auto 0;
+  background: rgba(0,0,0,.25);
+  border-radius: var(--r-md);
+  padding: 20px 24px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.8;
+  color: rgba(200,208,220,.75);
+  overflow-x: auto;
+  border: 1px solid rgba(255,255,255,.06);
+}
+.code-preview .comment { color: rgba(200,208,220,.4); }
+.code-preview .key     { color: var(--gold); }
+.code-preview .val     { color: #7dd3fc; }
+
+/* ════════════════════════════════════════════════
+   TECH STACK
+   ════════════════════════════════════════════════ */
+.tech {
+  background: var(--white);
+  padding: 64px 6vw;
+  text-align: center;
+}
+.tech .section-title { font-size: 20px; margin-bottom: 28px; color: var(--t2); }
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--t1);
+  transition: background .2s, border-color .2s, color .2s;
+}
+.chip:hover { background: var(--gold-10); border-color: var(--gold); color: var(--navy); }
+.chip .icon { font-size: 14px; }
+
+/* ════════════════════════════════════════════════
+   PROJECTS
+   ════════════════════════════════════════════════ */
+.projects {
+  background: var(--bg);
+  padding: 88px 6vw;
+}
+.projects-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.projects-header .section-title { font-size: 24px; margin-bottom: 0; }
+.projects-more { color: var(--gold); font-size: 14px; font-weight: 700; transition: color .2s; }
+.projects-more:hover { color: var(--gold-hover); }
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.project-card {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  padding: 26px;
+  display: block;
+  border: 1px solid transparent;
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+}
+.project-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sh-md);
+  border-color: var(--gold-15);
+}
+.project-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--r-pill);
+  margin-bottom: 14px;
+}
+.tag-gold { background: var(--gold-10); color: var(--gold); }
+.tag-navy { background: rgba(26,35,50,.08); color: var(--navy); }
+.tag-green{ background: rgba(34,197,94,.08); color: #16a34a; }
+.project-name {
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+.project-desc {
+  font-size: 13.5px;
+  color: var(--t2);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.project-link {
+  font-size: 13px;
+  color: var(--gold);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: gap .2s;
+}
+.project-card:hover .project-link { gap: 8px; }
+
+/* ════════════════════════════════════════════════
+   PIPELINE
+   ════════════════════════════════════════════════ */
+.pipeline {
+  background: var(--white);
+  padding: 88px 6vw;
+}
+.pipeline-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  max-width: 1100px;
+  margin: 48px auto 0;
+  position: relative;
+}
+.pipeline-grid::before {
+  content: '';
+  position: absolute;
+  top: 100px;
+  left: calc(12.5% + 10px);
+  right: calc(12.5% + 10px);
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold-15), var(--gold), var(--gold-15));
+  z-index: 0;
+}
+.pipeline-step {
+  background: var(--bg);
+  border-radius: var(--r-lg);
+  padding: 24px 16px;
+  text-align: center;
+  transition: transform .2s, box-shadow .2s;
+  cursor: default;
+  position: relative;
+  z-index: 1;
+}
+.pipeline-step:hover { transform: translateY(-4px); box-shadow: var(--sh-md); }
+.pipeline-step img {
+  width: 100%;
+  max-width: 160px;
+  height: 160px;
+  object-fit: contain;
+  border-radius: var(--r-md);
+  margin: 0 auto 16px;
+}
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 auto 12px;
+}
+.pipeline-name {
+  font-weight: 700;
+  font-size: 14.5px;
+  margin-bottom: 6px;
+}
+.pipeline-desc {
+  font-size: 12px;
+  color: var(--t2);
+  line-height: 1.6;
+}
+
+/* ════════════════════════════════════════════════
+   FAQ — ACCORDION
+   ════════════════════════════════════════════════ */
+.faq {
+  background: var(--bg);
+  padding: 88px 6vw;
+  scroll-margin-top: var(--nav-h);
+}
+.faq-list {
+  max-width: 680px;
+  margin: 48px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.faq-item {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: border-color .2s;
+}
+.faq-item.open { border-color: var(--gold-15); }
+.faq-q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 700;
+  font-size: 15px;
+  gap: 16px;
+}
+.faq-q:hover { background: var(--bg); }
+.faq-q .chevron {
+  flex-shrink: 0;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--t2);
+  transition: transform .3s, background .2s;
+}
+.faq-item.open .faq-q .chevron {
+  transform: rotate(180deg);
+  background: var(--gold-10);
+  color: var(--gold);
+}
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .35s cubic-bezier(.4,0,.2,1);
+}
+.faq-a-inner {
+  padding: 0 22px 18px;
+  font-size: 14.5px;
+  color: var(--t2);
+  line-height: 1.75;
+}
+
+/* ════════════════════════════════════════════════
+   STATS BAR
+   ════════════════════════════════════════════════ */
+.stats {
+  background: var(--white);
+  padding: 56px 6vw;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+.stat-num { font-size: 32px; font-weight: 800; color: var(--gold); margin-bottom: 6px; }
+.stat-label { font-size: 13px; color: var(--t2); }
+
+/* ════════════════════════════════════════════════
+   CTA
+   ════════════════════════════════════════════════ */
+.cta-section {
+  background: var(--gold-10);
+  padding: 88px 6vw;
+}
+.cta-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 64px;
+  align-items: center;
+}
+.cta-text .section-title { font-size: 30px; text-align: left; margin-bottom: 12px; }
+.cta-text .section-sub   { text-align: left; margin: 0 0 28px; font-size: 16px; }
+.cta-contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--white);
+  border-radius: var(--r-lg);
+  padding: 28px 32px;
+  min-width: 220px;
+  box-shadow: var(--sh-sm);
+}
+.cta-contacts-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--t2);
+  margin-bottom: 4px;
+}
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--t1);
+  transition: color .2s;
+}
+.contact-item:hover { color: var(--gold); }
+.contact-item .ci-icon { width: 20px; text-align: center; flex-shrink: 0; }
+
+/* ════════════════════════════════════════════════
+   FOOTER
+   ════════════════════════════════════════════════ */
+.footer {
+  background: var(--navy);
+  padding: 28px 6vw;
+  text-align: center;
+}
+.footer p {
+  color: rgba(200,208,220,.55);
+  font-size: 12.5px;
+}
+
+/* ════════════════════════════════════════════════
+   FAB CHAT
+   ════════════════════════════════════════════════ */
+#fab {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 9999;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: url(/images/zhiyan-fab-icon.jpg) center/cover no-repeat, var(--gold);
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(201,168,76,.45);
+  transition: transform .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+#fab:active { transform: scale(1.08); }
+#fab.hidden { display: none; }
+
+#chat-panel {
+  position: fixed;
+  bottom: 92px;
+  right: 20px;
+  z-index: 9998;
+  width: 360px; height: 560px;
+  background: var(--white);
+  border-radius: 18px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.18);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 14px;
+}
+#chat-panel.open { display: flex; }
+#chat-header {
+  background: linear-gradient(135deg, var(--navy), #3a4d6a);
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+#chat-close { cursor: pointer; font-size: 18px; opacity: .8; transition: opacity .15s; }
+#chat-close:hover { opacity: 1; }
+#chat-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--white);
+  flex-shrink: 0;
+}
+.chat-tab {
+  flex: 1;
+  padding: 10px 8px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--t3);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color .2s, border-color .2s;
+  white-space: nowrap;
+}
+.chat-tab.active { color: var(--navy); border-bottom-color: var(--gold); }
+.chat-tab:hover { color: var(--navy); }
+.chat-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #fafafa;
+}
+.chat-panel-body::-webkit-scrollbar { width: 4px; }
+.chat-panel-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.chat-msg {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  animation: fadeUp .25s ease;
+}
+.chat-msg.user { align-self: flex-end; background: var(--navy); color: #fff; border-bottom-right-radius: 4px; }
+.chat-msg.ai   { align-self: flex-start; background: #f0f0f0; color: #333; border-bottom-left-radius: 4px; }
+.chat-typing { align-self: flex-start; background: #f0f0f0; padding: 10px 16px; border-radius: 14px; border-bottom-left-radius: 4px; display: flex; gap: 4px; align-items: center; }
+.chat-typing span { width: 6px; height: 6px; border-radius: 50%; background: #999; animation: typingDot 1.2s infinite; }
+.chat-typing span:nth-child(2) { animation-delay: .2s; }
+.chat-typing span:nth-child(3) { animation-delay: .4s; }
+@keyframes fadeUp { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: none; } }
+#chat-input-area {
+  display: flex;
+  padding: 12px;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+  background: var(--white);
+  flex-shrink: 0;
+}
+#chat-input {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .2s;
+}
+#chat-input:focus { border-color: var(--gold); }
+#chat-send {
+  background: var(--gold);
+  color: #fff;
+  border-radius: 24px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .2s;
+}
+#chat-send:hover { background: var(--gold-hover); }
+#chat-send:active { opacity: .85; }
+
+/* ════════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero { padding: 72px 6vw; }
+  .cta-inner { grid-template-columns: 1fr; gap: 36px; }
+  .cta-contacts { min-width: auto; }
+}
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+  .nav-links {
+    position: fixed !important;
+    top: 0; right: 0;
+    width: 280px; height: 100vh;
+    background: var(--white);
+    padding: 96px 32px 40px;
+    flex-direction: column !important;
+    gap: 8px !important;
+    z-index: 55;
+    transform: translateX(100%);
+    transition: transform .35s cubic-bezier(.4,0,.2,1);
+    box-shadow: -4px 0 32px rgba(0,0,0,.12);
+    overflow-y: auto;
+    align-items: stretch !important;
+  }
+  .nav-links.open { transform: translateX(0); }
+  .nav-links a:not(.cta) {
+    padding: 14px 16px !important;
+    font-size: 15px !important;
+    border-radius: 12px !important;
+    min-height: 48px;
+    display: flex !important;
+    align-items: center !important;
+  }
+  .nav-links a:not(.cta)::after { display: none; }
+  .nav-links a:not(.cta):hover { background: var(--bg); color: var(--navy); }
+  .nav-links .cta { margin-top: 12px; text-align: center; justify-content: center; }
+  .hero-title { font-size: 32px; }
+  .hero { padding: 56px 5vw; }
+  .pipeline-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .pipeline-grid::before { display: none; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .about-card { grid-template-columns: 1fr; gap: 24px; text-align: center; padding: 32px 24px; }
+  .about-avatar-col { flex-direction: row; gap: 12px; justify-content: center; }
+  .about-badges { flex-direction: row; }
+  .about-links { justify-content: center; }
+  #chat-panel { width: calc(100vw - 32px); right: 16px; bottom: 88px; height: 60vh; }
+}
+@media (max-width: 480px) {
+  .hero-title { font-size: 26px; }
+  .pipeline-grid { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+  .services-grid { grid-template-columns: 1fr !important; }
+  .hero-grid > div:last-child { display: none; }
+  .stats-grid { grid-template-columns: 1fr 1fr !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav">
+  <a href="#" class="nav-logo">
+    <span class="name">謝 Lucien</span>
+    <span class="dot">·</span>
+    <span class="brand">智研</span>
+  </a>
+  <button class="hamburger" aria-label="選單" id="hamburger">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-overlay" id="navOverlay"></div>
+  <div class="nav-links" id="navLinks">
+    <a href="#services" class="nav-close">服務</a>
+    <a href="portfolio" class="nav-close">作品</a>
+    <a href="#about" class="nav-close">關於我</a>
+    <a href="#faq" class="nav-close">常見問答</a>
+    <a href="contact" class="cta nav-close">聊聊你的需求</a>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="home">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-eyebrow reveal">
+        <span class="dot"></span>從概念到落地，我幫你搞定
+      </div>
+      <h1 class="hero-title reveal">
+        有想法但卡在實作？<br/>我來幫你<em>實現</em>
+      </h1>
+      <p class="hero-body reveal">
+        很多人都有這個困擾：有一個想法，但不確定能不能做出來、要花多少錢、找誰做才放心。<br/><br/>
+        我的做法很直接——你告訴我你想要什麼，我評估可行性跟預算，覺得可以再做。不推銷、不硬聊。
+      </p>
+      <div class="hero-actions reveal">
+        <a href="contact" class="btn-primary">免費聊聊我的需求</a>
+        <a href="portfolio" class="btn-ghost">看看我做過的專案 <span class="arrow">→</span></a>
+      </div>
+      <p class="hero-meta reveal">🇹🇼 台灣桃園 · 做過的東西都開源，不怕你看</p>
+    </div>
+
+    <div class="hero-widget reveal" style="align-self: center;">
+      <div class="widget-header">
+        <span class="widget-dot"></span>
+        <span class="widget-title">智小研 · AI 客服</span>
+        <span class="widget-badge">隨時在線</span>
+      </div>
+      <div class="widget-messages" id="heroMessages">
+        <div class="bubble user">接案大概要多少錢？</div>
+        <div class="bubble ai">看專案範圍喔～先聊聊你想做什麼，我再抓大概預算給你，不會亂報價！</div>
+        <div class="bubble user">可以幫我串法律 AI 嗎？</div>
+        <div class="bubble ai">當然可以！我自己做了一套智研法律系統，47,001 筆法條、多模型交叉驗證，benchmark 平均 91–95 分，可以直接拿來用或客製喔。</div>
+      </div>
+      <div class="widget-input-row">
+        <input class="widget-input" type="text" id="heroInput" placeholder="輸入你的需求..." />
+        <button class="widget-send" id="heroSend" onclick="heroSendMsg()" aria-label="送出">➤</button>
+      </div>
+      <p class="widget-hint">留言後我會親自回覆，或直接填表單約時間聊。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STATS ═══ -->
+<section class="stats">
+  <div class="stats-grid">
+    <div class="reveal">
+      <div class="stat-num" data-count="78">0</div>
+      <div class="stat-label">系統整合模組</div>
+    </div>
+    <div class="reveal reveal-delay-1">
+      <div class="stat-num" data-count="47001">0</div>
+      <div class="stat-label">筆法條資料</div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="stat-num">91–95</div>
+      <div class="stat-label">分測驗平均分</div>
+    </div>
+    <div class="reveal reveal-delay-3">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">開源可驗證</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ABOUT ═══ -->
+<section class="about" id="about" style="scroll-margin-top:var(--nav-h)">
+  <div class="about-inner">
+    <div class="about-card reveal">
+      <div class="about-avatar-col">
+        <div class="about-avatar">謝</div>
+        <div class="about-badges">
+          <span class="badge badge-gold">台灣桃園</span>
+          <span class="badge badge-navy">開源貢獻者</span>
+          <span class="badge badge-gold">系統整合</span>
+        </div>
+      </div>
+      <div class="about-content">
+        <div class="about-label">先認識一下，不用急著決定</div>
+        <h2 class="about-title">謝 Lucien — 系統整合顧問</h2>
+        <p class="about-body">
+          我的工作很簡單——把你腦袋裡那個「不知道能不能做出來」的想法，變成跑得動、用得順的系統。<br/><br/>
+          我開源了 <strong>智研法律系統</strong>（全台最完整的 AI 法律研究平台），從法條查詢、合約審閱到法規異動監控，全部做成可實際運作的工具。<br/><br/>
+          我的做法跟別人不一樣——<strong>先做一個小版本讓你看看</strong>，確定方向對了再深入。不要你一次砸大錢，也不簽長約綁死你。
+        </p>
+        <div class="about-links">
+          <a href="https://github.com/Lucien-1127" class="about-link" target="_blank">🔗 GitHub 開源作品</a>
+          <a href="contact" class="about-link">✉️ 直接聯絡我</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SERVICES ═══ -->
+<section class="services" id="services" style="scroll-margin-top:var(--nav-h)">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">服務項目</div>
+    <h2 class="section-title">這是你可以找我做的事情</h2>
+    <p class="section-sub">不限領域，凡是有想串 AI、想讓流程更順的，都歡迎聊。</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal">
+      <div class="service-icon icon-gold">⚖️</div>
+      <div class="service-name">法律相關系統開發</div>
+      <div class="service-desc">法律事務所每天要處理大量文件——審合約、查法條、比對前後版本。這些流程我已做成完整的開源系統，品質經得起考驗。</div>
+    </div>
+    <div class="service-card reveal reveal-delay-1">
+      <div class="service-icon icon-navy">🤖</div>
+      <div class="service-name">流程自動化建置</div>
+      <div class="service-desc">報價單整理、客戶分類、資料比對——每天花你大量時間的事情，可以交給系統自動處理。人的時間應該留給需要判斷的事。</div>
+    </div>
+    <div class="service-card reveal reveal-delay-2">
+      <div class="service-icon icon-blue">🔗</div>
+      <div class="service-name">既有系統整合與優化</div>
+      <div class="service-desc">已導入系統但效果不如預期？我可以幫你盤點現狀、找出瓶頸、給出實際可行的改善方案，不換系統也能跑得更順。</div>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-icon icon-green">🎬</div>
+      <div class="service-name">AI 內容自動化生產</div>
+      <div class="service-desc">從主題發想到腳本、圖片、影片成品，一鍵搞定。不是幫你找剪輯師，是直接幫你把生產流程自動化、可重複使用。</div>
+    </div>
+    <div class="service-card reveal reveal-delay-1">
+      <div class="service-icon icon-purple">✏️</div>
+      <div class="service-name">AI 提示詞工程客製</div>
+      <div class="service-desc">維護 78 個系統整合技能模組，橫跨 18 大分類。需要穩定、可重複使用的 AI 技能？我可以幫你設計並驗證。</div>
+    </div>
+    <div class="service-card reveal reveal-delay-2" style="background:var(--gold-10);border:1.5px dashed var(--gold);">
+      <div class="service-icon icon-gold">💬</div>
+      <div class="service-name">不確定怎麼做？先聊聊</div>
+      <div class="service-desc">很多時候客戶不確定他們的問題能不能解決——這很正常。把你的情況跟我說，我幫你評估，不用錢。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COMMITTEE ═══ -->
+<section class="committee" id="committee" style="scroll-margin-top:var(--nav-h)">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">核心技術架構</div>
+    <h2 class="section-title">多模型委員會<br/>——不投票，只標分歧</h2>
+    <p class="section-sub">同一個問題，三個模型一起答。答案一樣的→共識，不一樣的→分歧，三個都錯的→盲區。不投票、不裁決，沒有黑箱。</p>
+  </div>
+  <div class="committee-flow reveal">
+    <!-- Row 1: Models -->
+    <div class="flow-row">
+      <div class="flow-model">
+        <div class="flow-model-name">模型 A</div>
+        <div class="flow-model-sub">語意判讀層</div>
+      </div>
+      <div class="flow-model">
+        <div class="flow-model-name">模型 B</div>
+        <div class="flow-model-sub">邏輯推論層</div>
+      </div>
+      <div class="flow-model">
+        <div class="flow-model-name">模型 C</div>
+        <div class="flow-model-sub">驗證比對層</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-engine">
+        <div class="flow-engine-name">正規化引擎</div>
+        <div class="flow-engine-sub">語意 → 法規 → 字串，逐層兜底</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-outputs">
+        <div class="flow-output out-ok">✅ 共識</div>
+        <div class="flow-output out-warn">⚠️ 分歧</div>
+        <div class="flow-output out-err">❌ 盲區</div>
+      </div>
+    </div>
+
+    <div class="committee-principles reveal">
+      <div class="principle">
+        <div class="principle-title">不裁決</div>
+        <div class="principle-body">委員會只標示分歧，最終判斷留給使用者。</div>
+      </div>
+      <div class="principle">
+        <div class="principle-title">不投票</div>
+        <div class="principle-body">3:0 的一致結果也可能是集體盲區。</div>
+      </div>
+      <div class="principle">
+        <div class="principle-title">透明度優先</div>
+        <div class="principle-body">每個模型的完整回應都保留，不做黑箱摘要。</div>
+      </div>
+      <div class="principle">
+        <div class="principle-title">依賴順序</div>
+        <div class="principle-body">語意正規化 → 條號正規化 → 字串比對，逐層兜底。</div>
+      </div>
+    </div>
+
+    <div class="code-preview reveal">
+      <div><span class="comment">// CommitteeReport</span></div>
+      <div><span class="key">"total_models"</span>: <span class="val">3</span>,</div>
+      <div><span class="key">"consensus"</span>: <span class="val">2</span>, <span class="key">"disagreement"</span>: <span class="val">1</span>, <span class="key">"blind_spot"</span>: <span class="val">0</span></div>
+      <div style="margin-top:6px;"><span class="key">"rag_hits"</span>: <span class="val">7</span>, <span class="key">"law_scope"</span>: <span class="val">"民法·刑法"</span></div>
+    </div>
+
+    <div style="text-align:center;margin-top:28px;" class="reveal">
+      <a href="portfolio#zhiyan-legal" style="color:var(--gold);font-size:14px;font-weight:700;">看看完整開源系統怎麼運作 →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TECH STACK ═══ -->
+<section class="tech">
+  <div class="section-title reveal">我常用的工具與技術</div>
+  <div class="chips reveal">
+    <span class="chip"><span class="icon">🧠</span> Claude (Anthropic)</span>
+    <span class="chip"><span class="icon">✨</span> Gemini</span>
+    <span class="chip"><span class="icon">🌊</span> DeepSeek</span>
+    <span class="chip"><span class="icon">🔀</span> OpenRouter</span>
+    <span class="chip"><span class="icon">🐍</span> Python</span>
+    <span class="chip"><span class="icon">⚡</span> FastAPI</span>
+    <span class="chip"><span class="icon">🗂️</span> RAG 向量搜尋</span>
+    <span class="chip"><span class="icon">📊</span> Pydantic v2</span>
+    <span class="chip"><span class="icon">🔗</span> LangChain</span>
+    <span class="chip"><span class="icon">☁️</span> GCP / VM</span>
+    <span class="chip"><span class="icon">📦</span> Docker</span>
+    <span class="chip"><span class="icon">💜</span> Obsidian Copilot</span>
+    <span class="chip"><span class="icon">📱</span> PWA</span>
+    <span class="chip"><span class="icon">🤝</span> 多模型合議</span>
+    <span class="chip"><span class="icon">🔍</span> 智慧檢索</span>
+    <span class="chip"><span class="icon">✅</span> 交叉驗證</span>
+    <span class="chip"><span class="icon">⚖️</span> 台灣法條 DB</span>
+    <span class="chip"><span class="icon">🔒</span> NDA / 合約</span>
+  </div>
+</section>
+
+<!-- ═══ PROJECTS ═══ -->
+<section class="projects" id="projects" style="scroll-margin-top:var(--nav-h)">
+  <div class="projects-header reveal">
+    <h2 class="section-title">實際做過的專案</h2>
+    <a href="portfolio" class="projects-more">查看全部作品 →</a>
+  </div>
+  <div class="projects-grid">
+    <a href="portfolio#zhiyan-legal" class="project-card reveal">
+      <span class="project-tag tag-gold">研究框架 · 開源</span>
+      <div class="project-name">智研法律系統</div>
+      <p class="project-desc">47,001 筆法條、多模型交叉驗證、知識圖譜。benchmark 平均 91–95 分，程式碼全公開，親自驗證。</p>
+      <span class="project-link">查看詳情 →</span>
+    </a>
+    <a href="portfolio#hermes-skills" class="project-card reveal reveal-delay-1">
+      <span class="project-tag tag-navy">Agent 技能庫</span>
+      <div class="project-name">V13 Bedrock-Matrix</div>
+      <p class="project-desc">78 個技能模組、18 大分類。從系統架構到文案生成，越用越順手的顧問工具箱。</p>
+      <span class="project-link">查看詳情 →</span>
+    </a>
+    <a href="portfolio#cineagent" class="project-card reveal reveal-delay-2">
+      <span class="project-tag tag-gold">內容自動化</span>
+      <div class="project-name">CineAgent 動畫生成</div>
+      <p class="project-desc">給一個主題，自動產出腳本、圖片、影片。串聯多個代理，可抽換、可測試。</p>
+      <span class="project-link">查看詳情 →</span>
+    </a>
+    <a href="portfolio#law-monitor" class="project-card reveal reveal-delay-3">
+      <span class="project-tag tag-green">監控系統</span>
+      <div class="project-name">法規異動監控</div>
+      <p class="project-desc">法規改了馬上知道，不用每天手動刷網站。自動比對差異，直接推送通知。</p>
+      <span class="project-link">查看詳情 →</span>
+    </a>
+  </div>
+</section>
+
+<!-- ═══ PIPELINE ═══ -->
+<section class="pipeline" style="scroll-margin-top:var(--nav-h)">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">全流程 AI 自動化</div>
+    <h2 class="section-title">從想法到成品，一條龍搞定</h2>
+    <p class="section-sub">腳本 → 角色 → 影片 → 發布，每個環節都可替換、可測試。</p>
+  </div>
+  <div class="pipeline-grid">
+    <div class="pipeline-step reveal">
+      <div class="step-num">1</div>
+      <img src="/images/stage1-script.png" alt="AI 腳本企劃" loading="lazy">
+      <div class="pipeline-name">AI 腳本企劃</div>
+      <p class="pipeline-desc">輸入主題，一鍵生成腳本、分鏡與節奏</p>
+    </div>
+    <div class="pipeline-step reveal reveal-delay-1">
+      <div class="step-num">2</div>
+      <img src="/images/stage2-character.png" alt="AI 角色生成" loading="lazy">
+      <div class="pipeline-name">AI 深度角色生成</div>
+      <p class="pipeline-desc">建立跨場景一致的角色、服裝、風格與世界觀</p>
+    </div>
+    <div class="pipeline-step reveal reveal-delay-2">
+      <div class="step-num">3</div>
+      <img src="/images/stage3-video.png" alt="AI 圖生影片" loading="lazy">
+      <div class="pipeline-name">AI 圖生影片</div>
+      <p class="pipeline-desc">靜態圖片轉為流暢影片，畫面自然連貫</p>
+    </div>
+    <div class="pipeline-step reveal reveal-delay-3">
+      <div class="step-num">4</div>
+      <img src="/images/stage4-deliver.png" alt="AI 完成作品" loading="lazy">
+      <div class="pipeline-name">AI 完成作品</div>
+      <p class="pipeline-desc">自動整合素材，輸出成品，一鍵發布到各大平台</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section class="faq" id="faq" style="scroll-margin-top:var(--nav-h)">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">常見問題</div>
+    <h2 class="section-title">你可能會想知道的</h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item reveal" onclick="toggleFaq(this)">
+      <div class="faq-q">你們接案範圍是什麼？<span class="chevron">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">不限制領域，法律、內容、系統整合都做過。只要有想串 AI 的想法都歡迎聊。法律系統是我的強項，但製造業流程自動化、電商資料整合我也做過。</div></div>
+    </div>
+    <div class="faq-item reveal reveal-delay-1" onclick="toggleFaq(this)">
+      <div class="faq-q">費用怎麼算？<span class="chevron">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">先了解需求再報價，不會硬推你用不到的方案。簡單的串接幾千元台幣起，複雜系統視規模而定。第一次討論完全免費。</div></div>
+    </div>
+    <div class="faq-item reveal reveal-delay-2" onclick="toggleFaq(this)">
+      <div class="faq-q">多久能交付？<span class="chevron">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">簡單的大概 1–2 週，複雜的會先跟你討論時程再動工。我習慣先出一個小版本讓你確認方向，確定沒問題再繼續深入。</div></div>
+    </div>
+    <div class="faq-item reveal" onclick="toggleFaq(this)">
+      <div class="faq-q">會簽保密協議嗎？<span class="chevron">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">會。你的東西就是你的，我會簽 NDA，合作細節我不對外公開。開源的部分只有我自己的作品。</div></div>
+    </div>
+    <div class="faq-item reveal reveal-delay-1" onclick="toggleFaq(this)">
+      <div class="faq-q">用哪些 AI 模型？<span class="chevron">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Claude、Gemini、DeepSeek 看需求選，也可以三個一起上做交叉驗證（就是我的委員會架構）。模型選擇我會依任務特性建議，你也可以指定偏好。</div></div>
+    </div>
+    <div class="faq-item reveal reveal-delay-2" onclick="toggleFaq(this)">
+      <div class="faq-q">如果做到一半不想繼續怎麼辦？<span class="chevron">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">不簽長約，做到哪算到哪。所有做出來的東西都交給你，你可以自己繼續或找別人接手。我希望每一步都讓你覺得值得，不是用合約綁住你。</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="cta-text reveal">
+      <div class="section-eyebrow" style="text-align:left">準備開始了嗎？</div>
+      <h2 class="section-title">不確定能不能幫上你的忙？<br/>來聊聊就知道了。</h2>
+      <p class="section-sub">第一次討論完全免費，不推銷、不硬聊。覺得可以再做，覺得不行就當交個朋友。</p>
+      <a href="contact" class="btn-primary" style="display:inline-flex;">免費聊聊我的需求</a>
+    </div>
+    <div class="cta-contacts reveal">
+      <div class="cta-contacts-title">直接聯絡我</div>
+      <a href="mailto:Lucien127@proton.me" class="contact-item">
+        <span class="ci-icon">📧</span> Lucien127@proton.me
+      </a>
+      <a href="https://github.com/Lucien-1127" class="contact-item" target="_blank">
+        <span class="ci-icon">🔗</span> github.com/Lucien-1127
+      </a>
+      <a href="https://line.me/R/ti/p/~vbn920" class="contact-item" target="_blank">
+        <span class="ci-icon">💬</span> LINE ID: vbn920
+      </a>
+      <span class="contact-item">
+        <span class="ci-icon">📞</span> 0966-130-460
+      </span>
+      <span class="contact-item">
+        <span class="ci-icon">📍</span> 台灣桃園
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <p>謝 Lucien · 智研 © 2026 · 個人作品網站，合作細節歡迎直接討論。</p>
+</footer>
+
+<!-- ═══ FAB ═══ -->
+<div id="fab" onclick="toggleChat()" aria-label="開啟客服" title="智小研 AI 客服">🤖</div>
+<div id="chat-panel">
+  <div id="chat-header">
+    <span id="chat-title">🤖 智小研 · AI 客服</span>
+    <span id="chat-close" onclick="toggleChat()">✕</span>
+  </div>
+  <div id="chat-tabs">
+    <button class="chat-tab active" id="tab-cs" onclick="switchTab('cs')">💬 客服</button>
+    <button class="chat-tab" id="tab-legal" onclick="switchTab('legal')">⚖️ 法律諮詢</button>
+  </div>
+  <div class="chat-panel-body" id="panel-cs">
+    <div class="chat-msg ai">嗨！我是智小研 👋 有什麼想了解的嗎？</div>
+  </div>
+  <div class="chat-panel-body" id="panel-legal" style="display:none">
+    <div class="chat-msg ai">您好！我是智小研法律助手 ⚖️ 請問有什麼法律問題需要協助？</div>
+  </div>
+  <div id="chat-input-area">
+    <input type="text" id="chat-input" placeholder="輸入你的問題..." onkeydown="if(event.key==='Enter')sendMsg()">
+    <button id="chat-send" onclick="sendMsg()">送出</button>
+  </div>
+</div>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script>
+/* ─── Hamburger ─── */
+const ham = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+const navOverlay = document.getElementById('navOverlay');
+function closeNav() {
+  ham.classList.remove('open');
+  navLinks.classList.remove('open');
+  navOverlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+ham.addEventListener('click', () => {
+  const open = !navLinks.classList.contains('open');
+  if (open) {
+    ham.classList.add('open');
+    navLinks.classList.add('open');
+    navOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  } else { closeNav(); }
+});
+navOverlay.addEventListener('click', closeNav);
+document.querySelectorAll('.nav-close').forEach(a => a.addEventListener('click', closeNav));
+
+/* ─── Scroll Reveal ─── */
+// Add .animate class to all reveals so they start hidden for animation
+document.querySelectorAll('.reveal').forEach(el => el.classList.add('animate'));
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { 
+    if (e.isIntersecting) { 
+      e.target.classList.remove('animate'); 
+      e.target.classList.add('visible'); 
+      revealObserver.unobserve(e.target); 
+    } 
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+/* ─── Count-up ─── */
+function animateCount(el) {
+  const target = parseInt(el.dataset.count);
+  if (!target) return;
+  let start = 0;
+  const step = target / 60;
+  const timer = setInterval(() => {
+    start = Math.min(start + step, target);
+    el.textContent = Math.round(start).toLocaleString();
+    if (start >= target) clearInterval(timer);
+  }, 16);
+}
+const countObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { animateCount(e.target); countObserver.unobserve(e.target); } });
+}, { threshold: .5 });
+document.querySelectorAll('[data-count]').forEach(el => countObserver.observe(el));
+
+/* ─── FAQ Accordion ─── */
+function toggleFaq(item) {
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => {
+    i.classList.remove('open');
+    i.querySelector('.faq-a').style.maxHeight = '0';
+  });
+  if (!isOpen) {
+    item.classList.add('open');
+    const a = item.querySelector('.faq-a');
+    a.style.maxHeight = a.scrollHeight + 'px';
+  }
+}
+
+/* ─── Hero Widget Chat ─── */
+const heroSystemPrompt = [
+  '你是謝 Lucien 個人品牌接案網站上的「智小研」，用親切、口語但專業的繁體中文（台灣）回覆訪客問題，語氣像在聊天。',
+  '你的核心任務：介紹服務、引導需求、建立信任。讓訪客願意留下聯絡方式或寄信。',
+  '回覆控制在 2–4 句以內。不確定的說不確定，不要瞎掰。',
+  '先了解訪客想做什麼，再推薦對應的服務項目。',
+  '如果訪客有明確需求，引導他們寄信到 Lucien127@proton.me 或到 contact 頁面填寫。',
+  '謝 Lucien：台灣桃園系統整合顧問，開源智研法律系統（47,001 筆法條，benchmark 91–95 分）。',
+  '服務：法律 AI、流程自動化、系統整合、AI 提示詞工程、影音自動化。',
+  '接案：免費了解需求再報價，可簽 NDA，不簽長約。',
+  '聯絡：Lucien127@proton.me。如訪客問不相關的事，友善引回本業。',
+].join('\n');
+let heroHistory = [];
+
+function heroSendMsg() {
+  const inp = document.getElementById('heroInput');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+  const msgs = document.getElementById('heroMessages');
+  const userBubble = document.createElement('div');
+  userBubble.className = 'bubble user';
+  userBubble.textContent = text;
+  msgs.appendChild(userBubble);
+  heroHistory.push({ role: 'user', content: text });
+
+  const typing = document.createElement('div');
+  typing.className = 'bubble ai typing';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  msgs.appendChild(typing);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  fetch('/api/ai/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'auto',
+      messages: [{ role: 'system', content: heroSystemPrompt }, ...heroHistory.slice(-10)],
+    }),
+  })
+  .then(r => r.json())
+  .then(d => {
+    typing.remove();
+    const reply = d?.choices?.[0]?.message?.content || '稍等一下，可以直接寄信給我：Lucien127@proton.me';
+    heroHistory.push({ role: 'assistant', content: reply });
+    const aiBubble = document.createElement('div');
+    aiBubble.className = 'bubble ai';
+    aiBubble.textContent = reply;
+    msgs.appendChild(aiBubble);
+    msgs.scrollTop = msgs.scrollHeight;
+  })
+  .catch(() => {
+    typing.remove();
+    const fallbacks = [
+      '這個問題很好！可以直接寄信到 Lucien127@proton.me，我會詳細回覆你喔 😊',
+      '服務範圍蠻廣的，歡迎到聯絡頁面填表單，我看到就會回！',
+      '先聊聊你的需求吧～可以直接找我：Lucien127@proton.me',
+    ];
+    const aiBubble = document.createElement('div');
+    aiBubble.className = 'bubble ai';
+    aiBubble.textContent = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    msgs.appendChild(aiBubble);
+    msgs.scrollTop = msgs.scrollHeight;
+  });
+}
+document.getElementById('heroInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); heroSendMsg(); }
+});
+
+/* ─── FAB Chat ─── */
+let chatOpen = false;
+let currentTab = 'cs';
+const csHistory = [{ role: 'system', content: heroSystemPrompt }];
+const legalHistory = [{ role: 'system', content: '你是智研法律系統助手「智小研」，回答台灣法律問題。',
+  '你有完整的台灣法條資料庫（47,001 筆法條），包括民法、刑法、商法、行政法等。',
+  '回答規範：',
+  '1. 引用具體法條（例：民法第 767 條、刑法第 309 條）',
+  '2. 用白話文解釋，讓一般人也能理解',
+  '3. 不確定的部分明確告知，不要瞎猜',
+  '4. 重大法律問題建議諮詢專業律師',
+  '5. 回覆控制在 3–5 句以內，精簡有力',
+  '6. 如涉及多個法條，條列清楚',
+  '7. 合約相關問題可提醒風險點',
+  '8. 不給訴訟策略建議，只給法律知識參考',
+  '重要：引用的法條和判決必須真實存在。如果無法驗證，明確告知「此部分無法確認」。', '使用繁體中文（台灣）。' }];
+
+function toggleChat() {
+  const panel = document.getElementById('chat-panel');
+  const fab = document.getElementById('fab');
+  chatOpen = !chatOpen;
+  panel.classList.toggle('open', chatOpen);
+  fab.classList.toggle('hidden', chatOpen);
+  if (chatOpen) setTimeout(() => document.getElementById('chat-input').focus(), 300);
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tab-cs').classList.toggle('active', tab === 'cs');
+  document.getElementById('tab-legal').classList.toggle('active', tab === 'legal');
+  document.getElementById('panel-cs').style.display = tab === 'cs' ? 'flex' : 'none';
+  document.getElementById('panel-legal').style.display = tab === 'legal' ? 'flex' : 'none';
+  document.getElementById('chat-title').textContent = tab === 'legal' ? '⚖️ 智小研 · 法律諮詢' : '🤖 智小研 · AI 客服';
+  document.getElementById('chat-input').placeholder = tab === 'legal' ? '輸入法律問題...' : '輸入你的問題...';
+}
+
+function addChatMsg(panelId, role, text) {
+  const panel = document.getElementById(panelId);
+  const d = document.createElement('div');
+  d.className = 'chat-msg ' + role;
+  d.textContent = text;
+  panel.appendChild(d);
+  panel.scrollTop = panel.scrollHeight;
+  return d;
+}
+
+function sendMsg() {
+  const inp = document.getElementById('chat-input');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+  const panelId = currentTab === 'legal' ? 'panel-legal' : 'panel-cs';
+  const history = currentTab === 'legal' ? legalHistory : csHistory;
+  addChatMsg(panelId, 'user', text);
+  history.push({ role: 'user', content: text });
+
+  const panel = document.getElementById(panelId);
+  const typing = document.createElement('div');
+  typing.className = 'chat-typing';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  panel.appendChild(typing);
+  panel.scrollTop = panel.scrollHeight;
+
+  const endpoint = currentTab === 'legal' ? '/api/legal/api/chat/ask' : '/api/ai/chat/completions';
+  const body = currentTab === 'legal'
+    ? JSON.stringify({ message: text, temperature: 0.3, max_tokens: 1000 })
+    : JSON.stringify({ model: 'auto', messages: history.slice(-11) });
+
+  fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body,
+  })
+  .then(r => r.json())
+  .then(d => {
+    typing.remove();
+    const reply = currentTab === 'legal'
+      ? (d.content || '抱歉，目前法律諮詢服務暫時無法使用。')
+      : (d?.choices?.[0]?.message?.content || '抱歉，目前無法連線，可直接寄信到 Lucien127@proton.me');
+    history.push({ role: 'assistant', content: reply });
+    if (history.length > 15) history.splice(1, history.length - 12);
+    addChatMsg(panelId, 'ai', reply);
+  })
+  .catch(() => {
+    typing.remove();
+    addChatMsg(panelId, 'ai', '連線不穩，可直接寄信到 Lucien127@proton.me 喔 ～');
+  });
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+/* TG Theme CSS Variables — synced via useTelegramTheme() */
+:root {
+  --tg-safe-area-top: env(safe-area-inset-top, 0px);
+  --tg-safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --tg-content-safe-area-top: env(safe-area-inset-top, 0px);
+  --tg-content-safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --tg-viewport-height: 100vh;
+  --tg-viewport-stable-height: 100vh;
+}
+
+/* Status indicator colors — FIXED, not theme-dependent */
+:root {
+  --status-green: #34c759;
+  --status-yellow: #ffcc02;
+  --status-red: #ff3b30;
+  --status-gray: #8e8e93;
+}
