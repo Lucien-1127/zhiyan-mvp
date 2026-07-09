@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#1a2332">
   <style>
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -59,7 +58,10 @@
           <sc-for list="{{ chatMessages }}" as="msg" hint-placeholder-count="0">
             <div style="{{ msg.rowStyle }}">
               <div style="{{ msg.avatarStyle }}">{{ msg.avatar }}</div>
-              <div style="{{ msg.bubbleStyle }}">{{ msg.node }}</div>
+              <div style="display: flex; flex-direction: column; min-width: 0;">
+                <div style="{{ msg.bubbleStyle }}">{{ msg.node }}</div>
+                <button onClick="{{ msg.copy }}" style="{{ msg.copyStyle }}">{{ msg.copyLabel }}</button>
+              </div>
             </div>
           </sc-for>
 
@@ -81,7 +83,10 @@
           </div>
           <div style="display: flex; justify-content: space-between; margin-top: 5px;">
             <span style="font-size: 10px; color: #9ca3af;">本系統僅供參考，不構成法律意見。</span>
-            <button onClick="{{ newChat }}" style="font-size: 11px; color: #c9a84c;">🆕 新對話</button>
+            <div style="display: flex; gap: 12px;">
+              <button onClick="{{ exportChat }}" style="font-size: 11px; color: #9ca3af;">📥 匯出</button>
+              <button onClick="{{ newChat }}" style="font-size: 11px; color: #c9a84c;">🆕 新對話</button>
+            </div>
           </div>
         </div>
       </div>
@@ -301,7 +306,7 @@
           <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">AI 模型供應商</h2>
           <p style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">選擇對話所使用的大型語言模型</p>
           <div style="display: flex; flex-direction: column; gap: 8px;">
-            <sc-for list="{{ providers }}" as="p" hint-placeholder-count="3">
+            <sc-for list="{{ providers }}" as="p" hint-placeholder-count="5">
               <button onClick="{{ p.select }}" style="{{ p.cardStyle }}">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                   <div>
@@ -330,6 +335,14 @@
             <div>
               <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 5px;">DeepSeek 金鑰</label>
               <input value="{{ keyDeepseek }}" onChange="{{ onKeyDeepseek }}" type="password" placeholder="sk-..." style="width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; outline: none;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 5px;">Groq 金鑰（免費額度）</label>
+              <input value="{{ keyGroq }}" onChange="{{ onKeyGroq }}" type="password" placeholder="gsk_..." style="width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; outline: none;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 5px;">OpenRouter 金鑰</label>
+              <input value="{{ keyOpenrouter }}" onChange="{{ onKeyOpenrouter }}" type="password" placeholder="sk-or-..." style="width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; outline: none;">
             </div>
           </div>
           <button onClick="{{ saveSettings }}" style="width: 100%; margin-top: 14px; padding: 12px; background: #c9a84c; color: #ffffff; border-radius: 8px; font-size: 14px; font-weight: 600;" style-hover="background: #d4b85a;">{{ saveLabel }}</button>
@@ -394,16 +407,19 @@ class Component extends DCLogic {
     osintResult: '',
     // 設定
     provider: 'deepseek',
-    keys: { openai: '', claude: '', deepseek: '' },
+    keys: { openai: '', claude: '', deepseek: '', groq: '', openrouter: '' },
     saved: false,
     testing: false,
     testResult: null,
+    copiedIdx: -1,
   };
 
   PROVIDERS = {
-    openai:   { name: 'OpenAI',   model: 'gpt-4o-mini',       url: 'https://api.openai.com/v1/chat/completions' },
-    claude:   { name: 'Claude',   model: 'claude-sonnet-4-20250514', url: 'https://api.anthropic.com/v1/messages' },
-    deepseek: { name: 'DeepSeek', model: 'deepseek-chat',     url: 'https://api.deepseek.com/v1/chat/completions' },
+    openai:     { name: 'OpenAI',     model: 'gpt-4o-mini',       url: 'https://api.openai.com/v1/chat/completions' },
+    claude:     { name: 'Claude',     model: 'claude-sonnet-4-20250514', url: 'https://api.anthropic.com/v1/messages' },
+    deepseek:   { name: 'DeepSeek',   model: 'deepseek-chat',     url: 'https://api.deepseek.com/v1/chat/completions' },
+    groq:       { name: 'Groq',       model: 'llama-3.3-70b-versatile', url: 'https://api.groq.com/openai/v1/chat/completions' },
+    openrouter: { name: 'OpenRouter', model: 'deepseek/deepseek-chat',  url: 'https://openrouter.ai/api/v1/chat/completions' },
   };
 
   SYSTEM_PROMPT = '你是「智研」，台灣法律 AI 研究助手。回答一律使用繁體中文（台灣用語）。引用法條時務必標明法規名稱與條號。每次回答結尾提醒：本回答僅供參考，不構成法律意見。';
@@ -413,19 +429,33 @@ class Component extends DCLogic {
       const saved = JSON.parse(localStorage.getItem('zhiyan_llm_settings') || 'null');
       if (saved) {
         this.setState({
-          provider: saved.provider || 'deepseek',
-          keys: { openai: '', claude: '', deepseek: '', ...(saved.keys || {}) },
+          provider: this.PROVIDERS[saved.provider] ? saved.provider : 'deepseek',
+          keys: { openai: '', claude: '', deepseek: '', groq: '', openrouter: '', ...(saved.keys || {}) },
         });
+      }
+    } catch (e) { /* 忽略 */ }
+    try {
+      const hist = JSON.parse(localStorage.getItem('zhiyan_chat_history') || 'null');
+      if (Array.isArray(hist) && hist.length) {
+        this.setState({ chatMessages: hist }, this.scrollChat);
       }
     } catch (e) { /* 忽略 */ }
   }
 
-  // ═══ LLM 呼叫（三家供應商）═══
-  async callLLM(userText, systemPrompt) {
+  persistChat = () => {
+    try {
+      // 只保留最近 60 則，避免撐爆 localStorage
+      localStorage.setItem('zhiyan_chat_history', JSON.stringify(this.state.chatMessages.slice(-60)));
+    } catch (e) { /* 忽略 */ }
+  };
+
+  // ═══ LLM 呼叫（五家供應商，支援多輪上下文）═══
+  async callLLM(userText, systemPrompt, history) {
     const provider = this.state.provider;
     const cfg = this.PROVIDERS[provider];
     const key = this.state.keys[provider];
     const sys = systemPrompt || this.SYSTEM_PROMPT;
+    const convo = [...(history || []), { role: 'user', content: userText }];
 
     if (!key) {
       throw new Error('尚未設定 ' + cfg.name + ' API 金鑰。請至「設定」頁面輸入金鑰。');
@@ -444,7 +474,7 @@ class Component extends DCLogic {
           model: cfg.model,
           max_tokens: 2048,
           system: sys,
-          messages: [{ role: 'user', content: userText }],
+          messages: convo,
         }),
       });
       if (!res.ok) {
@@ -455,7 +485,7 @@ class Component extends DCLogic {
       return data.content.map(b => b.text || '').join('');
     }
 
-    // OpenAI / DeepSeek — OpenAI 相容格式
+    // OpenAI / DeepSeek / Groq / OpenRouter — OpenAI 相容格式
     const res = await fetch(cfg.url, {
       method: 'POST',
       headers: {
@@ -468,7 +498,7 @@ class Component extends DCLogic {
         max_tokens: 2048,
         messages: [
           { role: 'system', content: sys },
-          { role: 'user', content: userText },
+          ...convo,
         ],
       }),
     });
@@ -484,20 +514,51 @@ class Component extends DCLogic {
   sendChat = async () => {
     const text = this.state.chatInput.trim();
     if (!text || this.state.chatLoading) return;
+    // 多輪上下文：帶上最近 12 則正常訊息
+    const history = this.state.chatMessages
+      .filter(m => !m.isError)
+      .slice(-12)
+      .map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text }));
     const msgs = [...this.state.chatMessages, { role: 'user', text }];
-    this.setState({ chatMessages: msgs, chatInput: '', chatLoading: true }, this.scrollChat);
+    this.setState({ chatMessages: msgs, chatInput: '', chatLoading: true }, () => { this.scrollChat(); this.persistChat(); });
     try {
-      const reply = await this.callLLM(text);
+      const reply = await this.callLLM(text, null, history);
       this.setState({
         chatMessages: [...this.state.chatMessages, { role: 'ai', text: reply }],
         chatLoading: false,
-      }, this.scrollChat);
+      }, () => { this.scrollChat(); this.persistChat(); });
     } catch (e) {
       this.setState({
         chatMessages: [...this.state.chatMessages, { role: 'ai', text: '❌ ' + e.message, isError: true }],
         chatLoading: false,
-      }, this.scrollChat);
+      }, () => { this.scrollChat(); this.persistChat(); });
     }
+  };
+
+  copyMessage = (idx) => {
+    const m = this.state.chatMessages[idx];
+    if (!m) return;
+    navigator.clipboard.writeText(m.text).then(() => {
+      this.setState({ copiedIdx: idx });
+      setTimeout(() => this.setState({ copiedIdx: -1 }), 1500);
+    });
+  };
+
+  exportChat = () => {
+    const msgs = this.state.chatMessages;
+    if (!msgs.length) return;
+    const lines = ['智研 AI 法律系統 — 對話紀錄', '匯出時間：' + new Date().toLocaleString('zh-TW'), '（僅供參考，不構成法律意見。）', '', ''];
+    msgs.forEach(m => {
+      lines.push((m.role === 'user' ? '【我】' : '【智研】'));
+      lines.push(m.text);
+      lines.push('');
+    });
+    const blob = new Blob(['﻿' + lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '智研對話_' + new Date().toISOString().slice(0, 10) + '.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
   };
 
   scrollChat = () => {
@@ -624,8 +685,9 @@ class Component extends DCLogic {
     }));
 
     // 聊天訊息
-    const chatMessages = s.chatMessages.map(m => {
+    const chatMessages = s.chatMessages.map((m, i) => {
       const isUser = m.role === 'user';
+      const canCopy = !isUser && !m.isError;
       return {
         avatar: isUser ? '👤' : '⚖️',
         rowStyle: 'display: flex; gap: 10px; max-width: 90%; animation: messageIn 0.3s ease;' + (isUser ? 'align-self: flex-end; flex-direction: row-reverse;' : 'align-self: flex-start;'),
@@ -634,6 +696,11 @@ class Component extends DCLogic {
           ? 'background: #e8edf5; border-bottom-right-radius: 4px;'
           : (m.isError ? 'background: #fef2f2; border: 1px solid #fca5a5; border-bottom-left-radius: 4px;' : 'background: #ffffff; border: 1px solid #e5e7eb; border-bottom-left-radius: 4px;')),
         node: m.text,
+        copy: () => this.copyMessage(i),
+        copyLabel: s.copiedIdx === i ? '✓ 已複製' : '📋 複製',
+        copyStyle: canCopy
+          ? 'align-self: flex-start; font-size: 11px; color: #9ca3af; margin-top: 4px; padding: 2px 6px;'
+          : 'display: none;',
       };
     });
 
@@ -721,7 +788,10 @@ class Component extends DCLogic {
       onChatInput: (e) => this.setState({ chatInput: e.target.value }),
       onChatKeyDown: (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.sendChat(); } },
       sendChat: this.sendChat,
-      newChat: () => this.setState({ chatMessages: [], chatInput: '' }),
+      newChat: () => this.setState({ chatMessages: [], chatInput: '' }, () => {
+        try { localStorage.removeItem('zhiyan_chat_history'); } catch (e) { /* 忽略 */ }
+      }),
+      exportChat: this.exportChat,
       sendBtnStyle: 'width: 36px; height: 36px; border-radius: 50%; background: #c9a84c; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; transition: all 0.15s;' + ((s.chatInput.trim() && !s.chatLoading) ? '' : 'opacity: 0.4; cursor: not-allowed;'),
       suggestions,
 
@@ -779,6 +849,8 @@ class Component extends DCLogic {
       keyOpenai: s.keys.openai, onKeyOpenai: (e) => this.setKey('openai', e.target.value),
       keyClaude: s.keys.claude, onKeyClaude: (e) => this.setKey('claude', e.target.value),
       keyDeepseek: s.keys.deepseek, onKeyDeepseek: (e) => this.setKey('deepseek', e.target.value),
+      keyGroq: s.keys.groq, onKeyGroq: (e) => this.setKey('groq', e.target.value),
+      keyOpenrouter: s.keys.openrouter, onKeyOpenrouter: (e) => this.setKey('openrouter', e.target.value),
       saveSettings: this.saveSettings,
       saveLabel: s.saved ? '✓ 已儲存' : '儲存設定',
       testConnection: this.testConnection,

@@ -36,6 +36,37 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
+
+  /* 程式碼區塊 */
+  --code-bg: #f0f2f5;
+}
+
+/* ─── 深色模式 ─────────────────────────────────── */
+[data-theme="dark"] {
+  --color-primary: #2b3a52;
+  --color-primary-light: #34455f;
+
+  --bg-main: #0f1520;
+  --bg-sidebar: #0b111b;
+  --bg-chat: #161f2e;
+  --bg-input: #1b2534;
+
+  --text-primary: #e6eaf1;
+  --text-secondary: #9aa5b5;
+  --text-light: #6b7686;
+  --text-sidebar: #c8d0dc;
+  --text-sidebar-heading: #8b9ab0;
+
+  --bubble-user: #2b3a52;
+  --bubble-user-text: #e6eaf1;
+  --bubble-ai: #1b2534;
+  --bubble-ai-text: #e6eaf1;
+  --bubble-border: #2a3547;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
+
+  --code-bg: #0f1520;
 }
 
 /* ─── Reset ────────────────────────────────────── */
@@ -123,35 +154,118 @@ body {
   text-transform: uppercase;
 }
 
-.sidebar-nav {
-  flex: 1;
-  padding: 16px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.sidebar-actions {
+  padding: 14px 12px 6px;
 }
 
-.nav-btn {
+.new-chat-btn {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
   font-size: 14px;
+  font-weight: 600;
+  color: var(--color-accent);
+  border: 1px solid rgba(201,168,76,0.4);
+  transition: all 0.15s;
+}
+
+.new-chat-btn:hover {
+  background: rgba(201,168,76,0.12);
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.conv-list-title {
+  font-size: 11px;
+  color: var(--text-sidebar-heading);
+  letter-spacing: 1px;
+  padding: 4px 8px 6px;
+}
+
+.conv-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.conv-empty {
+  font-size: 12px;
+  color: var(--text-sidebar-heading);
+  padding: 8px;
+  text-align: center;
+}
+
+.conv-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
   color: var(--text-sidebar);
   transition: all 0.15s;
   width: 100%;
   text-align: left;
 }
 
-.nav-btn:hover {
+.conv-item:hover {
   background: rgba(255,255,255,0.08);
   color: #ffffff;
 }
 
-.nav-btn.active {
+.conv-item.active {
   background: rgba(201,168,76,0.15);
   color: var(--color-accent);
+}
+
+.conv-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conv-del {
+  font-size: 12px;
+  color: var(--text-sidebar-heading);
+  padding: 2px 5px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: all 0.15s;
+}
+
+.conv-item:hover .conv-del {
+  opacity: 1;
+}
+
+.conv-del:hover {
+  color: #ef4444;
+  background: rgba(239,68,68,0.12);
+}
+
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 150;
+}
+
+.sidebar-backdrop.show {
+  display: block;
 }
 
 .sidebar-footer {
@@ -385,7 +499,7 @@ body {
 
 /* Code blocks in messages */
 .message-bubble pre {
-  background: #f0f2f5;
+  background: var(--code-bg);
   border-radius: var(--radius-sm);
   padding: 12px;
   overflow-x: auto;
@@ -395,10 +509,99 @@ body {
 }
 
 .message-bubble code {
-  background: #f0f2f5;
+  background: var(--code-bg);
   padding: 1px 4px;
   border-radius: 3px;
   font-size: 13px;
+}
+
+/* Markdown-lite */
+.message-bubble ul {
+  margin: 6px 0 8px;
+  padding-left: 22px;
+}
+
+.message-bubble li {
+  margin-bottom: 4px;
+}
+
+.message-bubble h3,
+.message-bubble h4,
+.message-bubble h5,
+.message-bubble h6 {
+  margin: 10px 0 6px;
+  font-size: 15px;
+}
+
+.message-bubble.error {
+  border-color: #fca5a5 !important;
+  background: #fef2f2 !important;
+  color: #7f1d1d;
+}
+
+.retry-btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 5px 14px;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #b91c1c;
+  transition: background 0.15s;
+}
+
+.retry-btn:hover {
+  background: rgba(239,68,68,0.08);
+}
+
+/* 訊息操作 */
+.message-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.action-btn {
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 1px solid var(--bubble-border);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+}
+
+.action-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* 打字指示 */
+.typing-bubble {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.typing-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  animation: typingBlink 1.2s infinite;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+.typing-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-left: 4px;
+}
+
+@keyframes typingBlink {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
 }
 
 .message-meta {
@@ -483,55 +686,29 @@ body {
 
 .input-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 6px;
 }
 
-.input-hint {
+.input-hint,
+.input-disclaimer {
   font-size: 11px;
   color: var(--text-light);
 }
 
-/* ─── Loading ──────────────────────────────────── */
-.loading-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(26,35,50,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-  animation: fadeIn 0.2s;
-}
-
-.loading-spinner {
-  background: var(--bg-chat);
-  padding: 32px 48px;
-  border-radius: var(--radius-lg);
-  text-align: center;
-  box-shadow: var(--shadow-md);
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--bubble-border);
-  border-top-color: var(--color-accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: 0 auto 16px;
-}
-
-.loading-spinner span {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
 /* ─── Print ──────────────────────────────────── */
 @media print {
-  .sidebar, .topbar, .input-area, .loading-overlay { display: none !important; }
+  .sidebar, .sidebar-backdrop, .topbar, .input-area, .message-actions { display: none !important; }
   .main-content { overflow: visible !important; }
   .message { break-inside: avoid; }
+}
+
+/* ─── Reduced motion ───────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .typing-dot { animation: none; }
+  .message { animation: none; }
+  .chat-area { scroll-behavior: auto; }
 }
 
 /* ─── Animations ───────────────────────────────── */
@@ -590,6 +767,11 @@ body {
 
   .welcome h2 {
     font-size: 20px;
+  }
+
+  /* 觸控裝置沒有 Enter 提示的需求 */
+  .input-hint {
+    display: none;
   }
 
   /* 手機固定寬度，禁止左右滑動 */

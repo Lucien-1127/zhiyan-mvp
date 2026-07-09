@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>智研 AI 法律系統</title>
+  <meta name="description" content="台灣法律 AI 研究助手 — 強制引用 · 安全優先">
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -24,13 +25,15 @@
       </div>
     </div>
 
-    <nav class="sidebar-nav">
-      <button class="nav-btn active" data-mode="chat">
-        <span>💬</span> 法律諮詢
-      </button>
-      <button class="nav-btn" onclick="newChat()">
+    <div class="sidebar-actions">
+      <button class="new-chat-btn" onclick="newChat()">
         <span>🆕</span> 新對話
       </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="conv-list-title">對話紀錄</div>
+      <div class="conv-list" id="convList"></div>
     </nav>
 
     <div class="sidebar-footer">
@@ -38,9 +41,10 @@
         <span class="status-dot"></span>
         <span id="statusText">連線中...</span>
       </div>
-      <div class="version-info">v1.0.0 · SaaS 版</div>
+      <div class="version-info">v1.1.0 · SaaS 版</div>
     </div>
   </aside>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
   <!-- 主內容 -->
   <main class="main-content" id="mainContent">
@@ -52,6 +56,8 @@
         <span class="topbar-model" id="modelDisplay">deepseek-chat</span>
       </div>
       <div class="topbar-actions">
+        <button class="icon-btn" id="themeToggle" onclick="toggleTheme()" title="深色模式">🌙</button>
+        <button class="icon-btn" onclick="exportChat()" title="匯出對話">📥</button>
         <button class="icon-btn" onclick="newChat()" title="新對話">🆕</button>
       </div>
     </header>
@@ -101,18 +107,11 @@
         </button>
       </div>
       <div class="input-footer">
+        <span class="input-disclaimer">本系統僅供參考，不構成法律意見。</span>
         <span class="input-hint">Enter 送出 · Shift+Enter 換行</span>
       </div>
     </div>
   </main>
-
-  <!-- 載入動畫 -->
-  <div class="loading-overlay" id="loadingOverlay" style="display:none">
-    <div class="loading-spinner">
-      <div class="spinner"></div>
-      <span>智研分析中...</span>
-    </div>
-  </div>
 
   <script src="app.js"></script>
   <script>
