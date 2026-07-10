@@ -10,3 +10,8 @@ __pycache__/
 *.pyc
 dist/
 build/
+
+# Large artifacts
+*.zip
+*.tar.gz
+lucien126-backup.zip
