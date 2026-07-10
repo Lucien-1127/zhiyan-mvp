@@ -1,6 +1,0 @@
-import{j as e}from"./index-B7S-d_vA.js";function n({message:r="載入中…"}){return e.jsxs("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"48px 16px",gap:12},children:[e.jsx("style",{children:`
-        @keyframes loading-pulse {
-          0%, 100% { opacity: 0.3; transform: scale(0.8); }
-          50% { opacity: 1; transform: scale(1); }
-        }
-      `}),e.jsx("div",{style:{width:32,height:32,borderRadius:"50%",border:"3px solid var(--tg-theme-hint-color, #999)",borderTopColor:"var(--tg-theme-button-color, #2481cc)",animation:"loading-pulse 0.8s ease-in-out infinite"}}),e.jsx("span",{style:{fontSize:14,color:"var(--tg-theme-hint-color, #999)"},children:r})]})}function i({message:r,onRetry:o}){return e.jsxs("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"24px 16px",gap:12,margin:"12px 0",borderRadius:10,backgroundColor:"rgba(255, 59, 48, 0.08)",border:"1px solid rgba(255, 59, 48, 0.2)"},children:[e.jsx("span",{style:{fontSize:14,color:"#ff3b30",textAlign:"center",lineHeight:1.4},children:r}),o&&e.jsx("button",{onClick:o,style:{padding:"6px 20px",borderRadius:8,border:"1px solid #ff3b30",background:"transparent",color:"#ff3b30",fontSize:13,fontWeight:600,cursor:"pointer"},children:"重試"})]})}export{i as E,n as L};

@@ -11,6 +11,14 @@ __pycache__/
 dist/
 build/
 
+# Build outputs
+brand-site/
+
+# Backup & artifact files
+*.bak
+*.thumbnail
+*.pdf
+
 # Large artifacts
 *.zip
 *.tar.gz
