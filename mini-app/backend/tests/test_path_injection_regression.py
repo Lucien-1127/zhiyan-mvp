@@ -149,8 +149,7 @@ class EnvFilePathInjectionTests(PathInjectionTestBase):
     def test_add_key_cannot_escape_even_when_prefix_is_neutralizable(self):
         """即使 ENV_DIR 下存在 'groq-..' 目錄（中和檔名前綴），仍不得逃逸。"""
         harness.neutralizing_dir(self.sb.env_dir)
-        import tempfile
-        escaped = tempfile.mktemp(prefix="zhiyan_pathinj_escape_", suffix=".env")
+        escaped = os.path.join(self.sb.outside_dir, "escape.env")
         self.addCleanup(lambda: os.path.exists(escaped) and os.remove(escaped))
         label = harness.escape_label(escaped, self.sb.env_dir)
         status, body = self.srv.add_key(label)
@@ -174,9 +173,8 @@ class EnvFilePathInjectionTests(PathInjectionTestBase):
 
     def test_delete_refuses_unsafe_label_from_poisoned_registry(self):
         """alert #1/#2：registry 被寫入惡意 label 時，delete 不得刪 ENV_DIR 外的檔。"""
-        import tempfile
         harness.neutralizing_dir(self.sb.env_dir)
-        victim = tempfile.mktemp(prefix="zhiyan_pathinj_victim_", suffix=".env")
+        victim = os.path.join(self.sb.outside_dir, "delete-victim.env")
         harness.write_text(victim, "DO-NOT-DELETE")
         self.addCleanup(lambda: os.path.exists(victim) and os.remove(victim))
         poisoned_label = harness.escape_label(victim, self.sb.env_dir)

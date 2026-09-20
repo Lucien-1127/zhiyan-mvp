@@ -87,19 +87,10 @@ def neutralizing_dir(env_dir, platform=PLATFORM):
 
 
 def escape_label(target_path, env_dir):
-    """算出能讓 write_env_file 寫到 env_dir 之外 target_path 的 label。
-
-    檔名固定為 "{platform}-{label}.env"，label 的第一個 ".." 會被黏進
-    "<platform>-.." 這個（需已存在的）目錄元件，因此每一趟「下降再上升」
-    會消耗一個 dot-dot：實測 label 內含 N 組 ".." 時，淨上跳層數為 N-2。
-    要跳到 env_dir 上方 depth 層處需要 N = depth + 2。
-    """
-    target_dir = os.path.dirname(os.path.abspath(target_path))
-    depth = len(os.path.relpath(target_dir, env_dir).split(os.sep))
-    stem = os.path.basename(target_path)
-    if stem.endswith(".env"):
-        stem = stem[:-4]
-    return "../" * (depth + 2) + stem
+    """讓舊版 sink 指向同一個隔離沙箱內、ENV_DIR 外的精確測試路徑。"""
+    stem = target_path[:-4] if target_path.endswith(".env") else target_path
+    neutralized = os.path.join(env_dir, f"{PLATFORM}-..")
+    return "../" + os.path.relpath(stem, neutralized)
 
 
 def resolved_env_target(env_dir, label, platform=PLATFORM):
