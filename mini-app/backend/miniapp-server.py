@@ -15,6 +15,56 @@ PASSWORD_FILE = os.path.expanduser("~/.hermes/env/.auth_password")
 TOKEN_TTL = 86400  # 24 小時
 
 
+# ── 路徑安全（防 py/path-injection）──────────────────────
+# 使用者可控的 platform / label 會被組成檔名，因此必須同時滿足：
+#   1. 白名單檢查：只能是「單一檔名元件」（無路徑分隔符 / dot-dot / 控制字元）
+#   2. 收斂檢查：realpath 解析後仍須位於預期目錄之內（防 symlink 逃逸）
+# 任一項不合格即 raise ValueError（fail-closed），由呼叫端轉為 HTTP 400。
+_ASCII_NAME_CHARS = frozenset(
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ._-#@()'+&,"
+)
+_NAME_MAX_LEN = 64
+
+
+def _is_safe_name(name, max_len=_NAME_MAX_LEN):
+    """檢查 name 是否為安全的單一檔名元件（允許中文等 Unicode 顯示字元）。"""
+    if not isinstance(name, str) or name == "" or len(name) > max_len:
+        return False
+    if name in (".", "..") or ".." in name:
+        return False
+    for ch in name:
+        if ch in "/\\\x00":
+            return False
+        if ord(ch) < 0x20 or ord(ch) == 0x7f:
+            return False
+        if ord(ch) < 0x80 and ch not in _ASCII_NAME_CHARS:
+            return False
+    return True
+
+
+def _is_within(base_dir, candidate):
+    """candidate 經 realpath 解析後是否仍位於 base_dir 之內。"""
+    try:
+        base = os.path.realpath(base_dir).rstrip(os.sep)
+        resolved = os.path.realpath(candidate)
+    except (ValueError, OSError, TypeError):
+        return False
+    return resolved == base or resolved.startswith(base + os.sep)
+
+
+def _env_filename(platform, label):
+    """驗證並組出金鑰 env 檔的檔名；不安全則 raise ValueError。
+
+    通過驗證的檔名保證是「單一檔名元件」（不含路徑分隔符、dot-dot、控制字元），
+    因此再與 ENV_DIR 併接時不可能跳出目錄。
+    """
+    if platform not in PLATFORM_CFG:
+        raise ValueError(f"未知平台: {platform!r}")
+    if not _is_safe_name(platform, 32) or not _is_safe_name(label):
+        raise ValueError(f"不安全的檔名元件: platform={platform!r} label={label!r}")
+    return os.path.basename(f"{platform}-{label}.env")
+
+
 # ── Rate Limiter ──────────────────────────────────────────
 _LOGIN_ATTEMPTS = {}  # ip -> [attempts, window_start]
 
@@ -144,8 +194,11 @@ def save_registry(data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 def write_env_file(platform, label, key):
-    filename = f"{platform}-{label}.env"
-    filepath = os.path.join(ENV_DIR, filename)
+    # 檔名先通過白名單驗證，再正規化 + 字首收斂檢查（sink 前的路徑屏障）
+    env_root = os.path.realpath(ENV_DIR)
+    filepath = os.path.realpath(os.path.join(env_root, _env_filename(platform, label)))
+    if not filepath.startswith(env_root + os.sep):
+        raise ValueError(f"路徑逃逸 ENV_DIR: {os.path.basename(filepath)!r}")
     var_name = f"{platform.upper()}_API_KEY"
     with open(filepath, "w") as f:
         f.write(f"# {platform.upper()} API Key — {label}\n")
@@ -154,8 +207,10 @@ def write_env_file(platform, label, key):
     return filepath
 
 def delete_env_file(platform, label):
-    filename = f"{platform}-{label}.env"
-    filepath = os.path.join(ENV_DIR, filename)
+    env_root = os.path.realpath(ENV_DIR)
+    filepath = os.path.realpath(os.path.join(env_root, _env_filename(platform, label)))
+    if not filepath.startswith(env_root + os.sep):
+        raise ValueError(f"路徑逃逸 ENV_DIR: {os.path.basename(filepath)!r}")
     if os.path.exists(filepath): os.remove(filepath)
     for suffix in [".bak", ".old"]:
         alt = filepath + suffix
@@ -215,13 +270,49 @@ class AppHandler(SimpleHTTPRequestHandler):
         elif path.startswith("/api/"):
             self._json({"error":"unknown api"}, 404)
         else:
-            serve_path = path.lstrip("/")
-            full = os.path.join(STATIC_DIR, serve_path) if serve_path else STATIC_DIR
-            if os.path.isfile(full):
+            static_root = os.path.realpath(STATIC_DIR)
+            static_path = self._confined_static_path(path.lstrip("/"), static_root)
+            # 收斂屏障：使用者可控路徑經正規化後仍須落在 STATIC_DIR 之內
+            if static_path and static_path.startswith(static_root + os.sep) \
+                    and os.path.isfile(static_path):
                 super().do_GET()
             else:
+                fallback = self._confined_static_path("index.html", static_root)
+                if not fallback or not fallback.startswith(static_root + os.sep):
+                    self.send_error(404)
+                    return
                 self.path = "/index.html"
                 super().do_GET()
+
+    def _confined_static_path(self, url_path, static_root):
+        """把 URL 路徑收斂到 STATIC_DIR 之內；回傳已正規化的路徑，越界則 None。
+
+        這是 alert #3 (py/path-injection) 的根因修正：原程式直接把使用者可控
+        的 self.path 併進 STATIC_DIR 後呼叫 os.path.isfile()，可用 dot-dot
+        探測（並在部分情況下存取）目錄外的檔案。現在：
+          (1) 拒絕任何 dot-dot 或目錄成分，
+          (2) 以 os.path.realpath 正規化（同時擋掉 symlink 逃逸），
+          (3) 由呼叫端在 sink 前再做字首收斂檢查。
+        """
+        try:
+            if "\x00" in url_path:
+                return None
+            parts = []
+            for raw in url_path.split("/"):
+                if raw in ("", "."):
+                    continue
+                base_name = os.path.basename(raw)
+                if raw == ".." or base_name != raw:
+                    return None  # 拒絕任何 dot-dot 或目錄成分
+                parts.append(base_name)
+            if not parts:
+                return static_root
+            candidate = os.path.realpath(os.path.join(static_root, *parts))
+            if not _is_within(static_root, candidate):
+                return None  # symlink 逃逸防護
+            return candidate
+        except (ValueError, OSError, TypeError):
+            return None
 
     def do_POST(self):
         path = urlparse(self.path).path
@@ -283,8 +374,13 @@ class AppHandler(SimpleHTTPRequestHandler):
         if not label:
             existing = [k for k in registry if k["platform"] == platform]
             label = f"{platform}-{len(existing)+1}"
+        if not _is_safe_name(label):
+            self._json({"error":"標籤不合法：僅允許中英文、數字、空白與 . _ - # @ ( ) ' + & , 且長度 1-64"},400); return
         prefix = key[:20] + ("..." if len(key)>20 else "")
-        env_path = write_env_file(platform, label, key)
+        try:
+            env_path = write_env_file(platform, label, key)
+        except ValueError as e:
+            self._json({"error":f"不安全的金鑰檔名：{e}"},400); return
         registry.append({"id":kid,"platform":platform,"label":label,"prefix":prefix,
             "added_at":datetime.now().isoformat(),"env_file":os.path.basename(env_path),
             "tested":False,"valid":None})
@@ -297,7 +393,10 @@ class AppHandler(SimpleHTTPRequestHandler):
         if not kid: self._json({"error":"缺少金鑰 ID"},400); return
         registry = load_registry(); target = next((k for k in registry if k["id"]==kid),None)
         if not target: self._json({"error":"找不到該金鑰"},404); return
-        delete_env_file(target["platform"], target["label"])
+        try:
+            delete_env_file(target["platform"], target["label"])
+        except ValueError as e:
+            self._json({"error":f"registry 內含不安全的檔名，已拒絕刪除：{e}"},400); return
         registry = [k for k in registry if k["id"]!=kid]; save_registry(registry)
         self._json({"success":True,"deleted":{"id":kid,"platform":target["platform"],"label":target["label"]},"total":len(registry)})
 
@@ -314,8 +413,18 @@ class AppHandler(SimpleHTTPRequestHandler):
             if k["id"]==new_id and k["id"]!=kid: self._json({"error":f"新金鑰與既有金鑰重複 ({k['label']})"},409); return
         old_label = target["label"]
         if not new_label: new_label = old_label
-        delete_env_file(platform, old_label)
-        new_env = write_env_file(platform, new_label, new_key)
+        if not _is_safe_name(new_label):
+            self._json({"error":"標籤不合法：僅允許中英文、數字、空白與 . _ - # @ ( ) ' + & , 且長度 1-64"},400); return
+        try:
+            old_env = os.path.realpath(os.path.join(ENV_DIR, _env_filename(platform, old_label)))
+            if not _is_within(ENV_DIR, old_env):
+                raise ValueError("原金鑰路徑不安全")
+            # Write the replacement before removing the working credential.
+            new_env = write_env_file(platform, new_label, new_key)
+            if new_env != old_env:
+                delete_env_file(platform, old_label)
+        except ValueError as e:
+            self._json({"error":f"不安全的金鑰檔名：{e}"},400); return
         target.update({"id":new_id,"label":new_label,"prefix":new_key[:20]+("..." if len(new_key)>20 else ""),
             "env_file":os.path.basename(new_env),"tested":False,"valid":None,"replaced_at":datetime.now().isoformat()})
         save_registry(registry)
