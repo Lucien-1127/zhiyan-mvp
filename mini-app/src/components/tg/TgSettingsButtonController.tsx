@@ -7,7 +7,7 @@ export function TgSettingsButtonController({ visible, onClick, children }: {
   children: ReactNode;
 }) {
   useEffect(() => {
-    const tg = (window as any).Telegram?.WebApp;
+    const tg = window.Telegram?.WebApp;
     const sb = tg?.SettingsButton;
     if (!sb) return;
     try {
@@ -19,8 +19,8 @@ export function TgSettingsButtonController({ visible, onClick, children }: {
       }
     } catch { /* ignore outside TG */ }
     return () => {
-      try { sb.hide(); } catch {}
-      try { sb.offClick(onClick); } catch {}
+      try { sb.hide(); } catch { /* Telegram may be unavailable during teardown. */ }
+      try { sb.offClick(onClick); } catch { /* Continue cleanup if Telegram is unavailable. */ }
     };
   }, [visible, onClick]);
   return <>{children}</>;

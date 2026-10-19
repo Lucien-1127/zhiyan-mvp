@@ -37,8 +37,8 @@ export function EventsPage({ onBack }: EventsPageProps) {
         (a, b) => new Date(b.t).getTime() - new Date(a.t).getTime()
       );
       setEvents(merged.slice(0, 50));
-    } catch (e: any) {
-      setError(e.message || '無法取得事件記錄');
+    } catch (e: unknown) {
+      setError(e instanceof Error && e.message ? e.message : '無法取得事件記錄');
     } finally {
       setLoading(false);
     }

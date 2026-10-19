@@ -90,8 +90,8 @@ declare global {
   }
 }
 
-function getTG(): any {
-  return (window as any).Telegram?.WebApp ?? null;
+function getTG(): NonNullable<Window['Telegram']>['WebApp'] | null {
+  return window.Telegram?.WebApp ?? null;
 }
 
 export function isInTelegram(): boolean {
