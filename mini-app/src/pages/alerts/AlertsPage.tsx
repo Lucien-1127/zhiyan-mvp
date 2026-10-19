@@ -28,8 +28,8 @@ export function AlertsPage({ onBack }: AlertsPageProps) {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setAlerts(Array.isArray(data) ? data : []);
-    } catch (e: any) {
-      setError(e.message || '無法取得告警資料');
+    } catch (e: unknown) {
+      setError(e instanceof Error && e.message ? e.message : '無法取得告警資料');
     } finally {
       setLoading(false);
     }

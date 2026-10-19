@@ -27,8 +27,8 @@ export function SettingsPage({ onBack }: SettingsPageProps) {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setProfile(data);
-    } catch (e: any) {
-      setError(e.message || '無法取得系統設定');
+    } catch (e: unknown) {
+      setError(e instanceof Error && e.message ? e.message : '無法取得系統設定');
     } finally {
       setLoading(false);
     }
