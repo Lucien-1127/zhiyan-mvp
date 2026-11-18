@@ -37,8 +37,8 @@ export function ProxyPage({ onBack }: ProxyPageProps) {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setProxyData(data);
-    } catch (e: any) {
-      setError(e.message || '無法取得 Proxy 狀態');
+    } catch (e: unknown) {
+      setError(e instanceof Error && e.message ? e.message : '無法取得 Proxy 狀態');
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,6 @@
 import type { ApiResponse, ApiError } from '../../types/api';
 
-const API_BASE: string = (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_API_BASE) || '';
+const API_BASE: string = import.meta.env.VITE_API_BASE || '';
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
