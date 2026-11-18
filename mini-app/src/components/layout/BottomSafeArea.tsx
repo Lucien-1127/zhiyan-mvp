@@ -1,3 +1,7 @@
+import { useTelegramViewport } from '../../hooks/telegram';
+
 export function BottomSafeArea() {
-  return <div aria-hidden="true" style={{ height: 'env(safe-area-inset-bottom, 0px)', minHeight: 20 }} />;
+  const vp = useTelegramViewport();
+  const bottom = (vp as any).safeAreaInsetBottom ?? 0;
+  return <div style={{ height: bottom, minHeight: 20 }} />;
 }
